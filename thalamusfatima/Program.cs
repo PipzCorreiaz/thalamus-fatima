@@ -11,7 +11,7 @@ namespace ThalamusFAtiMA
         static void Main(string[] args)
         {
 
-            string character = "";
+            string character = "EMYS";
             string version = "A";
             if (args.Length > 0)
             {

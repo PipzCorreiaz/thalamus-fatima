@@ -153,7 +153,7 @@ namespace ThalamusFAtiMA
             this.PredefinedUtteranceSelector = new PredefinedUtteranceSelector(version);
             this.AMSummaryTemplateMatcher = new AMSummaryTemplateMatcher();
 
-            this._languageEngine = new LanguageEngineMaster("M", "M", "Data/Sueca/language/agent/en/language-set-1", "");
+            this._languageEngine = new LanguageEngineMaster("M", "M", "data/sueca/language/agent/en/language-set-1", "");
             this._languageEngine.Load();
 
             this._version = version;
@@ -228,13 +228,13 @@ namespace ThalamusFAtiMA
             ApplicationLogger.Instance().WriteLine("FAtiMA: Launching Agent for Windows..");
             proc.StartInfo.FileName = "cmd";
             //proc.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-            proc.StartInfo.CreateNoWindow = true;
+            proc.StartInfo.CreateNoWindow = false;
             //proc.StartInfo.UseShellExecute = true;
 
 
             proc.StartInfo.Arguments = "/K java -cp \"FAtiMA-Modular.jar;xmlenc-0.52.jar;gson-2.2.4.jar;sqlite-jdbc-3.7.2.jar" +
                     "\"" +
-                    " FAtiMA.AgentLauncher Data/CoinsStrings/ Scenarios.xml CoinsStrings EMYS FAtiMA.db";
+                    " FAtiMA.AgentLauncher Data/Sueca/ Scenarios.xml Sueca EMYS FAtiMA.db";
 
            
 

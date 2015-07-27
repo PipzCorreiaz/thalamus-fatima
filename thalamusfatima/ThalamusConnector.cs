@@ -1,7 +1,9 @@
-﻿using Thalamus;
+﻿using System;
+using Thalamus;
 using Thalamus.BML;
 using SuecaMessages;
 using ThalamusFAtiMA.Actions;
+using ThalamusFAtiMA.Utils;
 
 
 namespace ThalamusFAtiMA
@@ -25,6 +27,7 @@ namespace ThalamusFAtiMA
 
         void IIAActions.Decision(string card)
         {
+            ApplicationLogger.Instance().WriteLine("ThalamusConnector >>> Recebi uma decision!!!");
             ActionParameters param = new ActionParameters();
             param.Subject = "IA";
             param.ActionType = "IADecision";

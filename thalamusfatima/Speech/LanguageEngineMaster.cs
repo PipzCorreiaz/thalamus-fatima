@@ -94,7 +94,8 @@ namespace ThalamusFAtiMA.Speech
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress,PORT);
             
             // Create a TCP/IP socket...
-            this.master = new Socket(AddressFamily.Unspecified, SocketType.Stream, ProtocolType.Tcp);
+            //this.master = new Socket(AddressFamily.Unspecified, SocketType.Stream, ProtocolType.Tcp);
+            this.master = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             // Bind the socket...
             this.master.Bind(localEndPoint);
 

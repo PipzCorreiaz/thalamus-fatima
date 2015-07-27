@@ -33,11 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CookComputing.XmlRpcV2">
-      <HintPath>..\..\..\..\thalamus-code\Binaries\Release\CookComputing.XmlRpcV2.dll</HintPath>
+      <HintPath>..\..\thalamus-code\Binaries\Release\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
-    <Reference Include="SuecaMessages, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SuecaMessages\SuecaMessages\bin\Debug\SuecaMessages.dll</HintPath>
+    <Reference Include="SuecaMessages">
+      <HintPath>..\..\sueca-messages\SuecaMessages\bin\Debug\SuecaMessages.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
