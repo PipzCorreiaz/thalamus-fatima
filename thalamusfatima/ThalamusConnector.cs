@@ -8,7 +8,7 @@ using ThalamusFAtiMA.Utils;
 
 namespace ThalamusFAtiMA
 {
-    public class ThalamusConnector : ThalamusClient, IIAActions, ISpeakEvents
+    public class ThalamusConnector : ThalamusClient, IIAActions, ISuecaPerceptions, ISpeakEvents
     {
         public IThalamusFAtiMAPublisher TypifiedPublisher {  get;  private set; }
         public FAtiMAConnector FAtiMAConnector { private get; set; }
@@ -27,12 +27,12 @@ namespace ThalamusFAtiMA
 
         void IIAActions.Decision(string card)
         {
-            ApplicationLogger.Instance().WriteLine("ThalamusConnector >>> Recebi uma decision!!!");
-            ActionParameters param = new ActionParameters();
-            param.Subject = "IA";
-            param.ActionType = "IADecision";
-            param.Target = card;
-            FAtiMAConnector.ActionSucceeded(param);
+            FAtiMAConnector.Send("SUECA PLAY " + card);
+        }
+
+        void IIAActions.ExpectedScore(int team0Score, int team1Score)
+        {
+            FAtiMAConnector.Send("SUECA EXPECTED_SCORE " + team0Score + " " + team1Score);
         }
 
         public void SpeakStarted(string id) { }
@@ -44,6 +44,61 @@ namespace ThalamusFAtiMA
                 FAtiMAConnector.ActionSucceeded(FAtiMAConnector.CurrentSpeechAct);
                 FAtiMAConnector.CurrentSpeechAct = null;
             }
+        }
+
+        public void GameEnd(int team0Score, int team1Score)
+        {
+            ActionParameters param = new ActionParameters();
+            param.Subject = "EMYS";
+            param.ActionType = "GameEnd";
+            if(team1Score >= team0Score)
+            {
+                
+                param.Target = "1";
+            }
+            else
+            {
+                param.Target = "0";
+            }
+
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        public void GameStart(int id, int teamId, string trump, string[] cards)
+        {
+            ActionParameters param = new ActionParameters();
+            param.Subject = "EMYS";
+            param.ActionType = "GameStart";
+            param.Parameters.Add(teamId.ToString());
+            if(teamId == 0)
+            {
+                param.Parameters.Add("1");
+            }
+            else
+            {
+                param.Parameters.Add("0");
+            }
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        public void NextPlayer(int id)
+        {
+        }
+
+        public void Play(int id, string card)
+        {
+            ActionParameters param = new ActionParameters();
+            if (id == 1)
+            {
+                param.Subject = "EMYS";
+            }
+            else
+            {
+                param.Subject = "User" + id;
+            }
+            param.ActionType = "Play";
+            param.Target = card;
+            FAtiMAConnector.ActionSucceeded(param);
         }
     }
 }

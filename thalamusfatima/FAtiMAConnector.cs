@@ -413,7 +413,8 @@ namespace ThalamusFAtiMA
 
                 if(parameters.ActionType.Equals("Play"))
                 {
-                    ThalamusConnector.TypifiedPublisher.Play(0, parameters.Target);
+                    string correctJson = parameters.Target.Replace(';', ',');
+                    ThalamusConnector.TypifiedPublisher.Play(1, correctJson);
                 }
                 
                 //EntityAction<ActionParameters> a = this.Body.getActionByName(parameters.ActionType) as EntityAction<ActionParameters>;
