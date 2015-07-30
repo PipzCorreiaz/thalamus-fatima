@@ -30,9 +30,9 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.Send("SUECA PLAY " + card);
         }
 
-        void IIAActions.ExpectedScore(int team0Score, int team1Score)
+        void IIAActions.ExpectedScores(int team0Score, int team1Score)
         {
-            FAtiMAConnector.Send("SUECA EXPECTED_SCORE " + team0Score + " " + team1Score);
+            FAtiMAConnector.Send("SUECA EXPECTED_SCORES " + team0Score + " " + team1Score);
         }
 
         public void SpeakStarted(string id) { }
