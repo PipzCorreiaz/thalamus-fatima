@@ -1,23 +1,24 @@
 ﻿using System;
 using Thalamus;
 using SuecaMessages;
+using EmoteCommonMessages;
 
 namespace ThalamusFAtiMA
 {
-    public interface IFMLSpeech : IAction
-    {
-        void PerformUtterance(string utterance, string category);
-    }
+    //public interface IFMLSpeech : IAction
+    //{
+    //    void PerformUtterance(string utterance, string category);
+    //}
 
-    public interface IAnimationActions : IAction
-    {
-        void PlayAnimation(string id, string animation);
-        void PlayAnimationQueued(string id, string animation);
-    }
+    //public interface IAnimationActions : IAction
+    //{
+    //    void PlayAnimation(string id, string animation);
+    //    void PlayAnimationQueued(string id, string animation);
+    //}
 
 
 
-    public interface IThalamusFAtiMAPublisher : IThalamusPublisher, ISuecaActions, IFMLSpeech, IAnimationActions { }
+    public interface IThalamusFAtiMAPublisher : IThalamusPublisher, ISuecaActions, IFMLSpeech {} //, IAnimationActions { }
 
     public class ThalamusFAtiMAPublisher : IThalamusFAtiMAPublisher
     {
@@ -33,20 +34,29 @@ namespace ThalamusFAtiMA
             this._publisher.Play(id, card);
         }
 
-        public void PerformUtterance(string utterance, string category)
+        public void PerformUtterance(string id, string utterance, string category)
         {
-            this._publisher.PerformUtterance(utterance, category);
+            this._publisher.PerformUtterance(id, utterance, category);
         }
 
-
-        public void PlayAnimation(string id, string animation)
+        public void CancelUtterance(string id)
         {
-            this._publisher.PlayAnimation(id, animation);
+            this._publisher.CancelUtterance(id);
         }
 
-        public void PlayAnimationQueued(string id, string animation)
+        public void PerformUtteranceFromLibrary(string id, string category, string subcategory, string[] tagNames, string[] tagValues)
         {
-            this._publisher.PlayAnimationQueued(id, animation);
+            this._publisher.PerformUtteranceFromLibrary(id, category, subcategory, tagNames, tagValues);
         }
+
+        //public void PlayAnimation(string id, string animation)
+        //{
+        //    this._publisher.PlayAnimation(id, animation);
+        //}
+
+        //public void PlayAnimationQueued(string id, string animation)
+        //{
+        //    this._publisher.PlayAnimationQueued(id, animation);
+        //}
     }
 }

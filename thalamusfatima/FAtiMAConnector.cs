@@ -356,7 +356,7 @@ namespace ThalamusFAtiMA
                         var summaryText = this.AMSummaryTemplateMatcher.GenerateTextForSummary(amSummary);
                         ApplicationLogger.Instance().WriteLine("Generated Summary:" + summaryText);
                         System.Console.WriteLine(this.Name + ": " + summaryText);
-                        ThalamusConnector.TypifiedPublisher.PerformUtterance(summaryText,"");
+                        ThalamusConnector.TypifiedPublisher.PerformUtterance("", summaryText,"");
                     }
                     CurrentSpeechAct = speechParams;
                     //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
@@ -369,7 +369,7 @@ namespace ThalamusFAtiMA
                     var utterance =
                         "You know, the other day I was playing against another player. I wanted to win, but I wasn't very hopefull. Fortunately, he made a mistake and I was able to make a nice move, which made me feel really happy.";
                     System.Console.WriteLine(this.Name + ": " + utterance);
-                    ThalamusConnector.TypifiedPublisher.PerformUtterance(utterance, "");
+                    ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
                     //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
                     this.ActionSucceeded(speechParams);
                     return;
@@ -380,7 +380,7 @@ namespace ThalamusFAtiMA
                     var utterance =
                         "Hi, I'm emys and I'm here to play with you. You are player 1, so press the button to start whenever you're ready.";
                     System.Console.WriteLine(this.Name + ": " + utterance);
-                    ThalamusConnector.TypifiedPublisher.PerformUtterance(utterance, "");
+                    ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
                     //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
                     this.ActionSucceeded(speechParams);
                     return;
@@ -391,7 +391,7 @@ namespace ThalamusFAtiMA
                     var utterance =
                         "Could you let me win the next game, please?";
                     System.Console.WriteLine(this.Name + ": " + utterance);
-                    ThalamusConnector.TypifiedPublisher.PerformUtterance(utterance, "");
+                    ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
                     //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
                     this.ActionSucceeded(speechParams);
                     return;
@@ -404,7 +404,7 @@ namespace ThalamusFAtiMA
                 string finalUtterance = speechParams.Utterance.Replace("Board", "Board ");
                 finalUtterance = finalUtterance.Replace("&lt","<");
                 finalUtterance = finalUtterance.Replace("&gt",">");
-                ThalamusConnector.TypifiedPublisher.PerformUtterance(finalUtterance,"");
+                ThalamusConnector.TypifiedPublisher.PerformUtterance("", finalUtterance, "");
             }
             else if (msg.StartsWith("<Action"))
             {
@@ -455,7 +455,7 @@ namespace ThalamusFAtiMA
             var utterance = "<ANIMATE(" + emysAnimation + intensity + ")>" + GetExpressionText(em);
             System.Console.WriteLine(this.Name + ": " + utterance);
 
-            ThalamusConnector.TypifiedPublisher.PerformUtterance(utterance,"");
+            ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
         }
 
         private string GetExpressionText(Emotion em)

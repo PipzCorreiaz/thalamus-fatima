@@ -4,11 +4,12 @@ using Thalamus.BML;
 using SuecaMessages;
 using ThalamusFAtiMA.Actions;
 using ThalamusFAtiMA.Utils;
+using EmoteCommonMessages;
 
 
 namespace ThalamusFAtiMA
 {
-    public class ThalamusConnector : ThalamusClient, IIAActions, ISuecaPerceptions, ISpeakEvents
+    public class ThalamusConnector : ThalamusClient, IIAActions, ISuecaPerceptions, IFMLSpeechEvents //, ISpeakEvents
     {
         public IThalamusFAtiMAPublisher TypifiedPublisher {  get;  private set; }
         public FAtiMAConnector FAtiMAConnector { private get; set; }
@@ -35,34 +36,16 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.Send("SUECA EXPECTED_SCORES " + team0Score + " " + team1Score);
         }
 
-        public void SpeakStarted(string id) { }
+        //public void SpeakStarted(string id) { }
 
-        public void SpeakFinished(string id)
-        {
-            if(FAtiMAConnector.CurrentSpeechAct != null)
-            {
-                FAtiMAConnector.ActionSucceeded(FAtiMAConnector.CurrentSpeechAct);
-                FAtiMAConnector.CurrentSpeechAct = null;
-            }
-        }
-
-        public void GameEnd(int team0Score, int team1Score)
-        {
-            ActionParameters param = new ActionParameters();
-            param.Subject = "EMYS";
-            param.ActionType = "GameEnd";
-            if(team1Score >= team0Score)
-            {
-                
-                param.Target = "1";
-            }
-            else
-            {
-                param.Target = "0";
-            }
-
-            FAtiMAConnector.ActionSucceeded(param);
-        }
+        //public void SpeakFinished(string id)
+        //{
+        //    if(FAtiMAConnector.CurrentSpeechAct != null)
+        //    {
+        //        FAtiMAConnector.ActionSucceeded(FAtiMAConnector.CurrentSpeechAct);
+        //        FAtiMAConnector.CurrentSpeechAct = null;
+        //    }
+        //}
 
         public void GameStart(int id, int teamId, string trump, string[] cards)
         {
@@ -78,6 +61,24 @@ namespace ThalamusFAtiMA
             {
                 param.Parameters.Add("0");
             }
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        public void GameEnd(int team0Score, int team1Score)
+        {
+            ActionParameters param = new ActionParameters();
+            param.Subject = "EMYS";
+            param.ActionType = "GameEnd";
+            if (team1Score >= team0Score)
+            {
+
+                param.Target = "1";
+            }
+            else
+            {
+                param.Target = "0";
+            }
+
             FAtiMAConnector.ActionSucceeded(param);
         }
 
@@ -97,8 +98,35 @@ namespace ThalamusFAtiMA
                 param.Subject = "User" + id;
             }
             param.ActionType = "Play";
-            param.Target = card;
+            SuecaTypes.Card desirializedCard = SuecaTypes.JsonSerializable.DeserializeFromJson<SuecaTypes.Card>(card);
+            param.AddParameter(desirializedCard.Rank.ToString());
+            param.AddParameter(desirializedCard.Suit.ToString());
             FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        void IFMLSpeechEvents.UtteranceFinished(string id)
+        {
+            Console.WriteLine("FAtiMa received from Skene: " + id);
+
+            if(FAtiMAConnector.CurrentSpeechAct != null)
+            {
+                if (id.Equals("Greeting"))
+                {
+                    FAtiMAConnector.ActionSucceeded(FAtiMAConnector.CurrentSpeechAct);
+                }
+                else if (id.Equals("Afterword"))
+                {
+                    FAtiMAConnector.ActionSucceeded(FAtiMAConnector.CurrentSpeechAct);
+                }
+                else
+                {
+                    FAtiMAConnector.ActionSucceeded(FAtiMAConnector.CurrentSpeechAct);
+                }
+            }
+        }
+
+        void IFMLSpeechEvents.UtteranceStarted(string id)
+        {
         }
     }
 }
