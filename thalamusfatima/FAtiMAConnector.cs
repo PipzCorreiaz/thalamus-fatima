@@ -438,6 +438,8 @@ namespace ThalamusFAtiMA
             Send(msg);
         }
 
+        //string fazerAlgoASeguirAumaEmocao;
+
         private void PlayExpression(Emotion em)
         {
            
@@ -452,10 +454,12 @@ namespace ThalamusFAtiMA
             string emysAnimation = GetExpressionAnimation(em);
             if (String.IsNullOrWhiteSpace(emysAnimation)) return;
 
-            var utterance = "<ANIMATE(" + emysAnimation + intensity + ")>" + GetExpressionText(em);
-            System.Console.WriteLine(this.Name + ": " + utterance);
+            //var utterance = "<ANIMATE(" + emysAnimation + intensity + ")>" + GetExpressionText(em);
+            //System.Console.WriteLine(this.Name + ": " + utterance);
 
-            ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
+            //ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
+            //fazerAlgoASeguirAumaEmocao = Guid.NewGuid().ToString();
+            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary(/*fazerAlgoASeguirAumaEmocao*/"", "EmotionalState", em.Type, new string[] { "|intensity|" }, new string[] { intensity.ToString() });
         }
 
         private string GetExpressionText(Emotion em)
