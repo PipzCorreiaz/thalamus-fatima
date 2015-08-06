@@ -38,12 +38,11 @@
     <Reference Include="EmoteEvents">
       <HintPath>..\..\ENTS\Skene\EmoteEvents.dll</HintPath>
     </Reference>
-    <Reference Include="SuecaMessages, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SuecaMessages\SuecaMessages\bin\Debug\SuecaMessages.dll</HintPath>
+    <Reference Include="SuecaMessages">
+      <HintPath>..\..\sueca-messages\SuecaMessages\bin\Debug\SuecaMessages.dll</HintPath>
     </Reference>
     <Reference Include="SuecaTypes">
-      <HintPath>..\..\SuecaMessages\SuecaTypes\bin\Debug\SuecaTypes.dll</HintPath>
+      <HintPath>..\..\sueca-messages\SuecaTypes\bin\Debug\SuecaTypes.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -85,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
