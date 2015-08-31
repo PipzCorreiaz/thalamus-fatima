@@ -47,7 +47,15 @@ namespace ThalamusFAtiMA
         //    }
         //}
 
-        public void GameStart(int id, int teamId, string trump, string[] cards)
+        public void SessionStart(int numGames)
+        {
+            ActionParameters param = new ActionParameters();
+            param.ActionType = "SessionStart";
+            param.Target = numGames.ToString();
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        public void GameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
         {
             ActionParameters param = new ActionParameters();
             param.Subject = "EMYS";
@@ -82,8 +90,44 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.ActionSucceeded(param);
         }
 
+        public void SessionEnd(int team0Score, int team1Score)
+        {
+            ActionParameters param = new ActionParameters();
+            param.ActionType = "SessionEnd";
+            param.Target = team0Score.ToString();
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        public void Shuffle(int playerId)
+        {
+            ActionParameters param = new ActionParameters();
+            param.ActionType = "Shuffle";
+            param.Target = playerId.ToString();
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        public void Cut(int playerId)
+        {
+            ActionParameters param = new ActionParameters();
+            param.ActionType = "Cut";
+            param.Target = playerId.ToString();
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
+        public void Deal(int playerId)
+        {
+            ActionParameters param = new ActionParameters();
+            param.ActionType = "Deal";
+            param.Target = playerId.ToString();
+            FAtiMAConnector.ActionSucceeded(param);
+        }
+
         public void NextPlayer(int id)
         {
+            ActionParameters param = new ActionParameters();
+            param.ActionType = "NextPlayer";
+            param.Target = id.ToString();
+            FAtiMAConnector.ActionSucceeded(param);
         }
 
         public void Play(int id, string card)
