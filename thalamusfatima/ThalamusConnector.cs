@@ -50,6 +50,7 @@ namespace ThalamusFAtiMA
         public void SessionStart(int numGames)
         {
             ActionParameters param = new ActionParameters();
+            //param.Subject = "User";
             param.ActionType = "SessionStart";
             param.Target = numGames.ToString();
             FAtiMAConnector.ActionSucceeded(param);
@@ -58,7 +59,6 @@ namespace ThalamusFAtiMA
         public void GameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
         {
             ActionParameters param = new ActionParameters();
-            param.Subject = "EMYS";
             param.ActionType = "GameStart";
             param.Parameters.Add(teamId.ToString());
             if(teamId == 0)
@@ -135,7 +135,7 @@ namespace ThalamusFAtiMA
             ActionParameters param = new ActionParameters();
             if (id == 1)
             {
-                param.Subject = "EMYS";
+                param.Subject = "SELF";
             }
             else
             {

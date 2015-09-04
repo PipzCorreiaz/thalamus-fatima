@@ -347,7 +347,6 @@ namespace ThalamusFAtiMA
             else if (msg.StartsWith("<SpeechAct"))
             {
                 SpeechActParameters speechParams = (SpeechActParameters)SpeechActParser.Instance.Parse(msg);
-                
                 if (speechParams.Meaning.Equals("episodesummary"))
                 {
                     var amSummary = AMSummaryParser.Instance.Parse(speechParams.AMSummary) as AMSummary;
@@ -459,7 +458,14 @@ namespace ThalamusFAtiMA
 
             //ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
             //fazerAlgoASeguirAumaEmocao = Guid.NewGuid().ToString();
+            Console.WriteLine("Emotion: " + em.Type + " Cause: " + em.Cause);
             ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary(/*fazerAlgoASeguirAumaEmocao*/"", "EmotionalState", em.Type, new string[] { "|intensity|" }, new string[] { intensity.ToString() });
+            ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
+
+            //quando recebe as suas cartas
+            //ThalamusConnector.TypifiedPublisher.PlayAnimation("", "ownCardsAnalysis");
+            //quando joga ou outro joga
+            //ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardPosition");
         }
 
         private string GetExpressionText(Emotion em)
