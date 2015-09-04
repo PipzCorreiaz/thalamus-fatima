@@ -92,5 +92,6 @@ namespace ThalamusFAtiMA
         public void GlanceAtTarget(string targetName)
         {
             this._publisher.GlanceAtTarget(targetName);
+        }
     }
 }
