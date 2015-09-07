@@ -28,9 +28,9 @@ namespace ThalamusFAtiMA
             base.Dispose();
         }
 
-        void IIAActions.Decision(string card)
+        void IIAActions.Decision(string card, string followingInfo)
         {
-            FAtiMAConnector.Send("SUECA PLAY " + card);
+            FAtiMAConnector.Send("SUECA PLAY " + followingInfo + " " + card);
         }
 
         void IIAActions.ExpectedScores(int team0Score, int team1Score)
