@@ -314,10 +314,11 @@ namespace ThalamusFAtiMA
                     _previousEmotionalMsg = msg;
 
                     _emotionalState = (EmotionalState)EmotionalStateParser.Instance.Parse(msg);
-
                     em = _emotionalState.GetStrongestEmotion();
+
                     if(em!=null && !em.Type.Equals(_previousEmotion))
                     {
+                        Console.WriteLine("FAtiMA Connector - Received an emotional state caused by " + em.Cause);
                         _previousEmotion = em.Type;
                         PlayExpression(em);
                     }
@@ -346,6 +347,8 @@ namespace ThalamusFAtiMA
             }
             else if (msg.StartsWith("<SpeechAct"))
             {
+                Console.WriteLine("FAtiMA Connector - Received a speech act!");
+
                 SpeechActParameters speechParams = (SpeechActParameters)SpeechActParser.Instance.Parse(msg);
                 if (speechParams.Meaning.Equals("episodesummary"))
                 {
@@ -407,6 +410,7 @@ namespace ThalamusFAtiMA
             }
             else if (msg.StartsWith("<Action"))
             {
+                Console.WriteLine("FAtiMA Connector - Received an action!");
                 
                 parameters = (ActionParameters) ActionParametersParser.Instance.Parse(msg);
 

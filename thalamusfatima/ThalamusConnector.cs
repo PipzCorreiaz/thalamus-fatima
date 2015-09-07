@@ -11,12 +11,14 @@ namespace ThalamusFAtiMA
 {
     public class ThalamusConnector : ThalamusClient, IIAActions, ISuecaPerceptions, IFMLSpeechEvents //, ISpeakEvents
     {
+        private Random random;
         public IThalamusFAtiMAPublisher TypifiedPublisher {  get;  private set; }
         public FAtiMAConnector FAtiMAConnector { private get; set; }
-
+        
+        
         public ThalamusConnector(string clientName, string character = "") : base(clientName)
         {
-            //Thalamus.Environment.Instance.setDebug("messages", false);
+            random = new Random(Guid.NewGuid().GetHashCode());
             SetPublisher<IThalamusFAtiMAPublisher>();
             TypifiedPublisher = new ThalamusFAtiMAPublisher(Publisher);
         } 
@@ -56,6 +58,8 @@ namespace ThalamusFAtiMA
             param.Parameters.Add("1");
             param.Parameters.Add("0");
             FAtiMAConnector.ActionSucceeded(param);
+
+            TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionStart", "GREETING", new string[] {}, new string[] {});
         }
 
         public void GameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
@@ -72,6 +76,8 @@ namespace ThalamusFAtiMA
                 param.Parameters.Add("0");
             }
             FAtiMAConnector.ActionSucceeded(param);
+
+            TypifiedPublisher.PerformUtteranceFromLibrary("", "GameStart", "RECEIVE_CARDS", new string[] { }, new string[] { });
         }
 
         public void GameEnd(int team0Score, int team1Score)
@@ -106,6 +112,21 @@ namespace ThalamusFAtiMA
             param.ActionType = "Shuffle";
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
+
+            if (playerId == 1)
+            {
+                if (random.Next(100) <= 66)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "SELF", new string[] { }, new string[] { });
+                }
+            }
+            else
+            {
+                if (random.Next(100) <= 66)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "OTHER", new string[] { }, new string[] { });
+                }
+            }
         }
 
         public void Cut(int playerId)
@@ -114,6 +135,21 @@ namespace ThalamusFAtiMA
             param.ActionType = "Cut";
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
+
+            if (playerId == 1)
+            {
+                if (random.Next(100) <= 40)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "SELF", new string[] { }, new string[] { });
+                }
+            }
+            else
+            {
+                if (random.Next(100) <= 40)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "OTHER", new string[] { }, new string[] { });
+                }
+            }
         }
 
         public void Deal(int playerId)
@@ -122,6 +158,22 @@ namespace ThalamusFAtiMA
             param.ActionType = "Deal";
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
+
+            if (playerId == 1)
+            {
+                if (random.Next(100) <= 40)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "SELF", new string[] { }, new string[] { });
+                }
+            }
+            else
+            {
+                if (random.Next(100) <= 40)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "OTHER", new string[] { }, new string[] { });
+                }
+
+            }
         }
 
         public void NextPlayer(int id)
@@ -130,6 +182,28 @@ namespace ThalamusFAtiMA
             param.ActionType = "NextPlayer";
             param.Target = id.ToString();
             FAtiMAConnector.ActionSucceeded(param);
+
+            if (id == 1)
+            {
+                if (random.Next(100) <= 40)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "SELF", new string[] { }, new string[] { });
+                }
+            }
+            else if (id == 3)
+            {
+                if (random.Next(100) <= 40)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "TEAM_PLAYER", new string[] { }, new string[] { });
+                }
+            }
+            else
+            {
+                if (random.Next(100) <= 40)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "OPPONENT", new string[] { }, new string[] { });
+                }
+            }
         }
 
         public void Play(int id, string card)
@@ -152,7 +226,7 @@ namespace ThalamusFAtiMA
 
         void IFMLSpeechEvents.UtteranceFinished(string id)
         {
-            Console.WriteLine("FAtiMa received from Skene: " + id);
+            //Console.WriteLine("FAtiMa received from Skene: " + id);
 
             if(FAtiMAConnector.CurrentSpeechAct != null)
             {
