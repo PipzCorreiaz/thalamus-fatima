@@ -33,21 +33,21 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.Send("SUECA PLAY " + followingInfo + " " + card);
         }
 
-        void IIAActions.ExpectedScores(int team0Score, int team1Score)
+        void IIAActions.Expectation(string successProbability, string failureProbability)
         {
-            FAtiMAConnector.Send("SUECA EXPECTED_SCORES " + team0Score + " " + team1Score);
+            FAtiMAConnector.Send("SUECA EXPECTATION " + successProbability + " " + failureProbability);
         }
 
-        //public void SpeakStarted(string id) { }
-
-        //public void SpeakFinished(string id)
-        //{
-        //    if(FAtiMAConnector.CurrentSpeechAct != null)
-        //    {
-        //        FAtiMAConnector.ActionSucceeded(FAtiMAConnector.CurrentSpeechAct);
-        //        FAtiMAConnector.CurrentSpeechAct = null;
-        //    }
-        //}
+        public void MoveDesirabilities(string desirability, string desirabilityForOther)
+        {
+            ActionParameters param = new ActionParameters();
+            //param.Subject = "User";
+            param.ActionType = "MoveDesirabilities";
+            // param.Target = numGames.ToString();
+            param.Parameters.Add(desirability);
+            param.Parameters.Add(desirabilityForOther);
+            FAtiMAConnector.ActionSucceeded(param);
+        }
 
         public void SessionStart(int numGames)
         {
@@ -115,14 +115,14 @@ namespace ThalamusFAtiMA
 
             if (playerId == 1)
             {
-                if (random.Next(100) <= 66)
+                //if (random.Next(100) <= 66)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "SELF", new string[] { }, new string[] { });
                 }
             }
             else
             {
-                if (random.Next(100) <= 66)
+                //if (random.Next(100) <= 66)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "OTHER", new string[] { }, new string[] { });
                 }
@@ -138,14 +138,14 @@ namespace ThalamusFAtiMA
 
             if (playerId == 1)
             {
-                if (random.Next(100) <= 40)
+                //if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "SELF", new string[] { }, new string[] { });
                 }
             }
             else
             {
-                if (random.Next(100) <= 40)
+                //if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "OTHER", new string[] { }, new string[] { });
                 }
@@ -185,21 +185,21 @@ namespace ThalamusFAtiMA
 
             if (id == 1)
             {
-                if (random.Next(100) <= 40)
+                //if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "SELF", new string[] { }, new string[] { });
                 }
             }
             else if (id == 3)
             {
-                if (random.Next(100) <= 40)
+                //if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "TEAM_PLAYER", new string[] { }, new string[] { });
                 }
             }
             else
             {
-                if (random.Next(100) <= 40)
+                //if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "OPPONENT", new string[] { }, new string[] { });
                 }
@@ -248,5 +248,6 @@ namespace ThalamusFAtiMA
         void IFMLSpeechEvents.UtteranceStarted(string id)
         {
         }
+
     }
 }
