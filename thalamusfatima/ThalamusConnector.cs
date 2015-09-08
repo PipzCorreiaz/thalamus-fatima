@@ -41,7 +41,7 @@ namespace ThalamusFAtiMA
         public void MoveDesirabilities(string desirability, string desirabilityForOther)
         {
             ActionParameters param = new ActionParameters();
-            //param.Subject = "User";
+            param.Subject = "User";
             param.ActionType = "MoveDesirabilities";
             // param.Target = numGames.ToString();
             param.Parameters.Add(desirability);
@@ -52,7 +52,7 @@ namespace ThalamusFAtiMA
         public void SessionStart(int numGames)
         {
             ActionParameters param = new ActionParameters();
-            //param.Subject = "User";
+            param.Subject = "GUI";
             param.ActionType = "SessionStart";
            // param.Target = numGames.ToString();
             param.Parameters.Add("1");
@@ -65,6 +65,7 @@ namespace ThalamusFAtiMA
         public void GameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
         {
             ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
             param.ActionType = "GameStart";
             param.Parameters.Add(teamId.ToString());
             if (teamId == 0)
@@ -83,7 +84,7 @@ namespace ThalamusFAtiMA
         public void GameEnd(int team0Score, int team1Score)
         {
             ActionParameters param = new ActionParameters();
-            //param.Subject = "EMYS";
+            param.Subject = "GUI";
             param.ActionType = "GameEnd";
             if (team1Score >= team0Score)
             {
@@ -101,6 +102,7 @@ namespace ThalamusFAtiMA
         public void SessionEnd(int team0Score, int team1Score)
         {
             ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
             param.ActionType = "SessionEnd";
             param.Target = team0Score.ToString();
             FAtiMAConnector.ActionSucceeded(param);
@@ -109,6 +111,7 @@ namespace ThalamusFAtiMA
         public void Shuffle(int playerId)
         {
             ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
             param.ActionType = "Shuffle";
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
@@ -132,6 +135,7 @@ namespace ThalamusFAtiMA
         public void Cut(int playerId)
         {
             ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
             param.ActionType = "Cut";
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
@@ -155,6 +159,7 @@ namespace ThalamusFAtiMA
         public void Deal(int playerId)
         {
             ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
             param.ActionType = "Deal";
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
@@ -179,6 +184,7 @@ namespace ThalamusFAtiMA
         public void NextPlayer(int id)
         {
             ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
             param.ActionType = "NextPlayer";
             param.Target = id.ToString();
             FAtiMAConnector.ActionSucceeded(param);
