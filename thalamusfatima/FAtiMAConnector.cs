@@ -418,9 +418,12 @@ namespace ThalamusFAtiMA
                 {
                     string correctJson = parameters.Target.Replace(';', ',');
                     string followingInfo = parameters.Parameters[0];
-                    Console.WriteLine(">>>>>>>>>>>>>>>>>>>>>>>> " + followingInfo);
-                    ThalamusConnector.TypifiedPublisher.Play(1, correctJson);
-                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { }, new string[] { });
+                    string rank = parameters.Parameters[1];
+                    string suit = parameters.Parameters[2];
+                    Console.WriteLine(">>>>>>>>>DEBUG>>>>>>>>>> " + followingInfo + " " + rank + " " + suit);
+
+                    ThalamusConnector.TypifiedPublisher.Play(3, correctJson);
+                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|"}, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit)});
                 }
                 
                 //EntityAction<ActionParameters> a = this.Body.getActionByName(parameters.ActionType) as EntityAction<ActionParameters>;
@@ -429,6 +432,70 @@ namespace ThalamusFAtiMA
                 //    a.Start(parameters);
                 //}
             }
+        }
+
+        private string convertRankToPortuguese(string englishRank)
+        {
+            string portugueseRank = "";
+            switch (englishRank)
+            {
+                case "Two":
+                    portugueseRank = "um dois";
+                    break;
+                case "Three":
+                    portugueseRank = "um três";
+                    break;
+                case "Four":
+                    portugueseRank = "um quatro";
+                    break;
+                case "Five":
+                    portugueseRank = "um cinco";
+                    break;
+                case "Six":
+                    portugueseRank = "um seis";
+                    break;
+                case "Queen":
+                    portugueseRank = "uma dama";
+                    break;
+                case "Jack":
+                    portugueseRank = "um valete";
+                    break;
+                case "King":
+                    portugueseRank = "um rei";
+                    break;
+                case "Seven":
+                    portugueseRank = "uma manilha";
+                    break;
+                case "Ace":
+                    portugueseRank = "um ás";
+                    break;
+                default:
+                    break;
+            }
+            return portugueseRank;
+        }
+
+        private string convertSuitToPortuguese(string englishSuit)
+        {
+            string portugueseSuit = "";
+            switch (englishSuit)
+            {
+                case "Clubs":
+                    portugueseSuit = "paus";
+                    break;
+                case "Diamonds":
+                    portugueseSuit = "ouros";
+                    break;
+                case "Hearts":
+                    portugueseSuit = "copas";
+                    break;
+                case "Spaces":
+                    portugueseSuit = "espadas";
+                    break;
+                default:
+                    break;
+            }
+            return portugueseSuit;
         }
 
         private void LookAt(string entityName)

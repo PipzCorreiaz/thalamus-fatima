@@ -11,6 +11,7 @@ namespace ThalamusFAtiMA
 {
     public class ThalamusConnector : ThalamusClient, IIAActions, ISuecaPerceptions, IFMLSpeechEvents //, ISpeakEvents
     {
+        private int myIdOnUnity;
         private Random random;
         public IThalamusFAtiMAPublisher TypifiedPublisher {  get;  private set; }
         public FAtiMAConnector FAtiMAConnector { private get; set; }
@@ -18,6 +19,7 @@ namespace ThalamusFAtiMA
         
         public ThalamusConnector(string clientName, string character = "") : base(clientName)
         {
+            myIdOnUnity = 3; // default
             random = new Random(Guid.NewGuid().GetHashCode());
             SetPublisher<IThalamusFAtiMAPublisher>();
             TypifiedPublisher = new ThalamusFAtiMAPublisher(Publisher);
@@ -28,9 +30,9 @@ namespace ThalamusFAtiMA
             base.Dispose();
         }
 
-        void IIAActions.Decision(string card, string followingInfo)
+        void IIAActions.Decision(string card, string rank, string suit, string followingInfo)
         {
-            FAtiMAConnector.Send("SUECA PLAY " + followingInfo + " " + card);
+            FAtiMAConnector.Send("SUECA PLAY " + followingInfo + " " + rank + " " + suit + " " + card);
         }
 
         void IIAActions.Expectation(string successProbability, string failureProbability)
@@ -64,6 +66,8 @@ namespace ThalamusFAtiMA
 
         public void GameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
         {
+            myIdOnUnity = playerId;
+
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
             param.ActionType = "GameStart";
@@ -77,8 +81,6 @@ namespace ThalamusFAtiMA
                 param.Parameters.Add("0");
             }
             FAtiMAConnector.ActionSucceeded(param);
-
-            TypifiedPublisher.PerformUtteranceFromLibrary("", "GameStart", "RECEIVE_CARDS", new string[] { }, new string[] { });
         }
 
         public void GameEnd(int team0Score, int team1Score)
@@ -116,18 +118,25 @@ namespace ThalamusFAtiMA
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
 
-            if (playerId == 1)
+            if (playerId == myIdOnUnity)
             {
                 //if (random.Next(100) <= 66)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "SELF", new string[] { }, new string[] { });
+                    int playerId1 = (myIdOnUnity + 2) % 4; //team player
+                    int playerId2 = random.Next(0, 4);
+                    while (playerId2 == myIdOnUnity && playerId2 == playerId1) //choose someone besides me and my partner
+                    {
+                        playerId1 = random.Next(0, 4);
+                    }
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
                 }
             }
             else
             {
                 //if (random.Next(100) <= 66)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "OTHER", new string[] { }, new string[] { });
+                    int playerId1 = playerId;
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "OTHER", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
                 }
             }
         }
@@ -140,18 +149,25 @@ namespace ThalamusFAtiMA
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
 
-            if (playerId == 1)
+            if (playerId == myIdOnUnity)
             {
                 //if (random.Next(100) <= 40)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "SELF", new string[] { }, new string[] { });
+                    int playerId1 = (myIdOnUnity + 2) % 4; //team player
+                    int playerId2 = random.Next(0, 4);
+                    while (playerId2 == myIdOnUnity && playerId2 == playerId1) //choose someone besides me and my partner
+                    {
+                        playerId1 = random.Next(0, 4);
+                    }
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
                 }
             }
             else
             {
                 //if (random.Next(100) <= 40)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "OTHER", new string[] { }, new string[] { });
+                    int playerId1 = playerId;
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "OTHER", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
                 }
             }
         }
@@ -164,21 +180,46 @@ namespace ThalamusFAtiMA
             param.Target = playerId.ToString();
             FAtiMAConnector.ActionSucceeded(param);
 
-            if (playerId == 1)
+            if (playerId == myIdOnUnity)
             {
-                if (random.Next(100) <= 40)
+                //if (random.Next(100) <= 40)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "SELF", new string[] { }, new string[] { });
+                    int playerId1 = (myIdOnUnity + 2) % 4; //team player
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "SELF", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
                 }
             }
             else
             {
-                if (random.Next(100) <= 40)
+                //if (random.Next(100) <= 40)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "OTHER", new string[] { }, new string[] { });
+                    int playerId2 = (myIdOnUnity + 2) % 4; //team player
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "OTHER", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId.ToString(), playerId2.ToString() });
                 }
 
             }
+        }
+
+        public void ReceiveRobotCards()
+        {
+            ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
+            param.ActionType = "ReceiveRobotCards";
+            FAtiMAConnector.ActionSucceeded(param);
+
+            TypifiedPublisher.GazeAtTarget("cardPosition");
+
+            int playerId1 = random.Next(0, 4);
+            int playerId2 = random.Next(0, 4);
+            while (playerId1 == myIdOnUnity)
+            {
+                playerId1 = random.Next(0, 4);
+            }
+            while (playerId2 == myIdOnUnity)
+            {
+                playerId2 = random.Next(0, 4);
+            }
+
+            TypifiedPublisher.PerformUtteranceFromLibrary("", "ReceiveCards", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
         }
 
         public void NextPlayer(int id)
@@ -189,14 +230,14 @@ namespace ThalamusFAtiMA
             param.Target = id.ToString();
             FAtiMAConnector.ActionSucceeded(param);
 
-            if (id == 1)
+            if (id == myIdOnUnity)
             {
                 //if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "SELF", new string[] { }, new string[] { });
                 }
             }
-            else if (id == 3)
+            else if (id == (myIdOnUnity + 2) % 4)
             {
                 //if (random.Next(100) <= 40)
                 {
@@ -215,7 +256,7 @@ namespace ThalamusFAtiMA
         public void Play(int id, string card)
         {
             ActionParameters param = new ActionParameters();
-            if (id == 1)
+            if (id == myIdOnUnity)
             {
                 param.Subject = "SELF";
             }
