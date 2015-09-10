@@ -437,6 +437,7 @@ namespace ThalamusFAtiMA
         private string convertRankToPortuguese(string englishRank)
         {
             string portugueseRank = "";
+            Console.WriteLine("convertRankToPortuguese: englishRank is " + englishRank);
             switch (englishRank)
             {
                 case "Two":
@@ -458,7 +459,7 @@ namespace ThalamusFAtiMA
                     portugueseRank = "uma dama";
                     break;
                 case "Jack":
-                    portugueseRank = "um valete";
+                    portugueseRank = "um valéte";
                     break;
                 case "King":
                     portugueseRank = "um rei";
@@ -489,7 +490,7 @@ namespace ThalamusFAtiMA
                 case "Hearts":
                     portugueseSuit = "copas";
                     break;
-                case "Spaces":
+                case "Spades":
                     portugueseSuit = "espadas";
                     break;
                 default:

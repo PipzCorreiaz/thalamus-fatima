@@ -35,28 +35,34 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.Send("SUECA PLAY " + followingInfo + " " + rank + " " + suit + " " + card);
         }
 
-        void IIAActions.Expectation(string successProbability, string failureProbability)
-        {
-            FAtiMAConnector.Send("SUECA EXPECTATION " + successProbability + " " + failureProbability);
-        }
-
-        public void MoveDesirabilities(string desirability, string desirabilityForOther)
+        void IIAActions.MoveExpectations(int playerId, string desirability, string desirabilityForOther, string successProbability, string failureProbability)
         {
             ActionParameters param = new ActionParameters();
-            param.Subject = "User";
-            param.ActionType = "MoveDesirabilities";
-            // param.Target = numGames.ToString();
+            param.Subject = "User" + playerId;
+            param.ActionType = "MoveExpectations";
             param.Parameters.Add(desirability);
             param.Parameters.Add(desirabilityForOther);
+            param.Parameters.Add(successProbability);
+            param.Parameters.Add(failureProbability);
             FAtiMAConnector.ActionSucceeded(param);
         }
+
+        //public void MoveDesirabilities(string desirability, string desirabilityForOther)
+        //{
+        //    ActionParameters param = new ActionParameters();
+        //    param.Subject = "User";
+        //    param.ActionType = "MoveDesirabilities";
+        //    // param.Target = numGames.ToString();
+        //    param.Parameters.Add(desirability);
+        //    param.Parameters.Add(desirabilityForOther);
+        //    FAtiMAConnector.ActionSucceeded(param);
+        //}
 
         public void SessionStart(int numGames)
         {
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
             param.ActionType = "SessionStart";
-           // param.Target = numGames.ToString();
             param.Parameters.Add("1");
             param.Parameters.Add("0");
             FAtiMAConnector.ActionSucceeded(param);
@@ -106,17 +112,24 @@ namespace ThalamusFAtiMA
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
             param.ActionType = "SessionEnd";
-            param.Target = team0Score.ToString();
+            if (team0Score > team1Score)
+            {
+                param.Target = "0";
+            }
+            else
+            {
+                param.Target = "1";
+            }
             FAtiMAConnector.ActionSucceeded(param);
         }
 
         public void Shuffle(int playerId)
         {
-            ActionParameters param = new ActionParameters();
-            param.Subject = "GUI";
-            param.ActionType = "Shuffle";
-            param.Target = playerId.ToString();
-            FAtiMAConnector.ActionSucceeded(param);
+            //ActionParameters param = new ActionParameters();
+            //param.Subject = "GUI";
+            //param.ActionType = "Shuffle";
+            //param.Target = playerId.ToString();
+            //FAtiMAConnector.ActionSucceeded(param);
 
             if (playerId == myIdOnUnity)
             {
@@ -143,11 +156,11 @@ namespace ThalamusFAtiMA
 
         public void Cut(int playerId)
         {
-            ActionParameters param = new ActionParameters();
-            param.Subject = "GUI";
-            param.ActionType = "Cut";
-            param.Target = playerId.ToString();
-            FAtiMAConnector.ActionSucceeded(param);
+            //ActionParameters param = new ActionParameters();
+            //param.Subject = "GUI";
+            //param.ActionType = "Cut";
+            //param.Target = playerId.ToString();
+            //FAtiMAConnector.ActionSucceeded(param);
 
             if (playerId == myIdOnUnity)
             {
@@ -174,11 +187,11 @@ namespace ThalamusFAtiMA
 
         public void Deal(int playerId)
         {
-            ActionParameters param = new ActionParameters();
-            param.Subject = "GUI";
-            param.ActionType = "Deal";
-            param.Target = playerId.ToString();
-            FAtiMAConnector.ActionSucceeded(param);
+            //ActionParameters param = new ActionParameters();
+            //param.Subject = "GUI";
+            //param.ActionType = "Deal";
+            //param.Target = playerId.ToString();
+            //FAtiMAConnector.ActionSucceeded(param);
 
             if (playerId == myIdOnUnity)
             {
@@ -201,10 +214,10 @@ namespace ThalamusFAtiMA
 
         public void ReceiveRobotCards()
         {
-            ActionParameters param = new ActionParameters();
-            param.Subject = "GUI";
-            param.ActionType = "ReceiveRobotCards";
-            FAtiMAConnector.ActionSucceeded(param);
+            //ActionParameters param = new ActionParameters();
+            //param.Subject = "GUI";
+            //param.ActionType = "ReceiveRobotCards";
+            //FAtiMAConnector.ActionSucceeded(param);
 
             TypifiedPublisher.GazeAtTarget("cardPosition");
 
@@ -224,11 +237,11 @@ namespace ThalamusFAtiMA
 
         public void NextPlayer(int id)
         {
-            ActionParameters param = new ActionParameters();
-            param.Subject = "GUI";
-            param.ActionType = "NextPlayer";
-            param.Target = id.ToString();
-            FAtiMAConnector.ActionSucceeded(param);
+            //ActionParameters param = new ActionParameters();
+            //param.Subject = "GUI";
+            //param.ActionType = "NextPlayer";
+            //param.Target = id.ToString();
+            //FAtiMAConnector.ActionSucceeded(param);
 
             if (id == myIdOnUnity)
             {
@@ -255,20 +268,20 @@ namespace ThalamusFAtiMA
 
         public void Play(int id, string card)
         {
-            ActionParameters param = new ActionParameters();
-            if (id == myIdOnUnity)
-            {
-                param.Subject = "SELF";
-            }
-            else
-            {
-                param.Subject = "User" + id;
-            }
-            param.ActionType = "Play";
-            SuecaTypes.Card desirializedCard = SuecaTypes.JsonSerializable.DeserializeFromJson<SuecaTypes.Card>(card);
-            param.AddParameter(desirializedCard.Rank.ToString());
-            param.AddParameter(desirializedCard.Suit.ToString());
-            FAtiMAConnector.ActionSucceeded(param);
+            //ActionParameters param = new ActionParameters();
+            //if (id == myIdOnUnity)
+            //{
+            //    param.Subject = "SELF";
+            //}
+            //else
+            //{
+            //    param.Subject = "User" + id;
+            //}
+            //param.ActionType = "Play";
+            //SuecaTypes.Card desirializedCard = SuecaTypes.JsonSerializable.DeserializeFromJson<SuecaTypes.Card>(card);
+            //param.AddParameter(desirializedCard.Rank.ToString());
+            //param.AddParameter(desirializedCard.Suit.ToString());
+            //FAtiMAConnector.ActionSucceeded(param);
         }
 
         void IFMLSpeechEvents.UtteranceFinished(string id)
