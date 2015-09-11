@@ -314,18 +314,37 @@ namespace ThalamusFAtiMA
                     _previousEmotionalMsg = msg;
 
                     _emotionalState = (EmotionalState)EmotionalStateParser.Instance.Parse(msg);
-                    em = _emotionalState.GetStrongestEmotion();
+                    em = _emotionalState.GetEmotionCausedBy("MoveExpectations");
 
-                    if(em!=null && !em.Type.Equals(_previousEmotion))
+                    if (em == null)
                     {
-                        Console.WriteLine("FAtiMA Connector - Received an emotional state caused by " + em.Cause);
-                        _previousEmotion = em.Type;
-                        PlayExpression(em);
+                        em = _emotionalState.GetStrongestEmotion();
+                        if (em != null && !em.Type.Equals(_previousEmotion))
+                        {
+                            Console.WriteLine("FAtiMA Connector - It will executed the emotional state " + em.Type + " caused by other events");
+                            _previousEmotion = em.Type;
+                            PlayOnlyPosture(em);
+                        }
+                        else if (em == null)
+                        {
+                            _previousEmotion = "";
+                        }
                     }
-                    else if(em == null)
+                    else 
                     {
-                        _previousEmotion = "";
+                        ThalamusConnector.MoveExpectaionsReceived = true;
+                        if (!em.Type.Equals(_previousEmotion))
+                        {
+                            Console.WriteLine("FAtiMA Connector - It will executed the emotional state " + em.Type + " caused by MoveExpectations");
+                            _previousEmotion = em.Type;
+                            PlayExpressionWithUtterance(em);                        
+                        }
+
                     }
+                    
+                    //em = _emotionalState.GetStrongestEmotion();
+                   
+                    
 
                 }
             }
@@ -420,17 +439,10 @@ namespace ThalamusFAtiMA
                     string followingInfo = parameters.Parameters[0];
                     string rank = parameters.Parameters[1];
                     string suit = parameters.Parameters[2];
-                    Console.WriteLine(">>>>>>>>>DEBUG>>>>>>>>>> " + followingInfo + " " + rank + " " + suit);
 
                     ThalamusConnector.TypifiedPublisher.Play(3, correctJson);
                     ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|"}, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit)});
                 }
-                
-                //EntityAction<ActionParameters> a = this.Body.getActionByName(parameters.ActionType) as EntityAction<ActionParameters>;
-                //if (a != null)
-                //{
-                //    a.Start(parameters);
-                //}
             }
         }
 
@@ -512,30 +524,23 @@ namespace ThalamusFAtiMA
             Send(msg);
         }
 
-        //string fazerAlgoASeguirAumaEmocao;
 
-        private void PlayExpression(Emotion em)
+        private void PlayOnlyPosture(Emotion em)
         {
-           
-            //only express emotions with intensity higher or equal than 2
-            if(em.Intensity < 2)
-            {
-                return;
-            }
-            ApplicationLogger.Instance().WriteLine("Expressing emotion: " + em.ToXml());
-           
-            int intensity = (int)Math.Ceiling(em.Intensity/2.0f);
-            string emysAnimation = GetExpressionAnimation(em);
-            if (String.IsNullOrWhiteSpace(emysAnimation)) return;
-
-            //var utterance = "<ANIMATE(" + emysAnimation + intensity + ")>" + GetExpressionText(em);
-            //System.Console.WriteLine(this.Name + ": " + utterance);
-
-            //ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
-            //fazerAlgoASeguirAumaEmocao = Guid.NewGuid().ToString();
-            Console.WriteLine("Emotion: " + em.Type + " Cause: " + em.Cause);
-            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary(/*fazerAlgoASeguirAumaEmocao*/"", "EmotionalState", em.Type, new string[] { "|intensity|" }, new string[] { intensity.ToString() });
             ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
+        }
+
+
+        private void PlayExpressionWithUtterance(Emotion em)
+        {
+            ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
+
+            int intensity = (int)Math.Ceiling(em.Intensity / 2.0f);
+            
+            string eventName = em.Cause.Split(' ')[1];
+            string playerId = em.Cause.Split(' ')[2];
+            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Play", em.Type, new string[] { "|intensity|" }, new string[] { intensity.ToString() });
+            
 
             //quando recebe as suas cartas
             //ThalamusConnector.TypifiedPublisher.PlayAnimation("", "ownCardsAnalysis");

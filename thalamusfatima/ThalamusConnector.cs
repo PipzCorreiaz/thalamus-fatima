@@ -15,6 +15,7 @@ namespace ThalamusFAtiMA
         private Random random;
         public IThalamusFAtiMAPublisher TypifiedPublisher {  get;  private set; }
         public FAtiMAConnector FAtiMAConnector { private get; set; }
+        public bool MoveExpectaionsReceived;
         
         
         public ThalamusConnector(string clientName, string character = "") : base(clientName)
@@ -23,6 +24,7 @@ namespace ThalamusFAtiMA
             random = new Random(Guid.NewGuid().GetHashCode());
             SetPublisher<IThalamusFAtiMAPublisher>();
             TypifiedPublisher = new ThalamusFAtiMAPublisher(Publisher);
+            MoveExpectaionsReceived = true;
         } 
 
         public override void Dispose()
@@ -40,23 +42,13 @@ namespace ThalamusFAtiMA
             ActionParameters param = new ActionParameters();
             param.Subject = "User" + playerId;
             param.ActionType = "MoveExpectations";
+            param.Target = playerId.ToString();
             param.Parameters.Add(desirability);
             param.Parameters.Add(desirabilityForOther);
             param.Parameters.Add(successProbability);
             param.Parameters.Add(failureProbability);
             FAtiMAConnector.ActionSucceeded(param);
         }
-
-        //public void MoveDesirabilities(string desirability, string desirabilityForOther)
-        //{
-        //    ActionParameters param = new ActionParameters();
-        //    param.Subject = "User";
-        //    param.ActionType = "MoveDesirabilities";
-        //    // param.Target = numGames.ToString();
-        //    param.Parameters.Add(desirability);
-        //    param.Parameters.Add(desirabilityForOther);
-        //    FAtiMAConnector.ActionSucceeded(param);
-        //}
 
         public void SessionStart(int numGames)
         {
@@ -125,12 +117,6 @@ namespace ThalamusFAtiMA
 
         public void Shuffle(int playerId)
         {
-            //ActionParameters param = new ActionParameters();
-            //param.Subject = "GUI";
-            //param.ActionType = "Shuffle";
-            //param.Target = playerId.ToString();
-            //FAtiMAConnector.ActionSucceeded(param);
-
             if (playerId == myIdOnUnity)
             {
                 //if (random.Next(100) <= 66)
@@ -156,12 +142,6 @@ namespace ThalamusFAtiMA
 
         public void Cut(int playerId)
         {
-            //ActionParameters param = new ActionParameters();
-            //param.Subject = "GUI";
-            //param.ActionType = "Cut";
-            //param.Target = playerId.ToString();
-            //FAtiMAConnector.ActionSucceeded(param);
-
             if (playerId == myIdOnUnity)
             {
                 //if (random.Next(100) <= 40)
@@ -187,12 +167,6 @@ namespace ThalamusFAtiMA
 
         public void Deal(int playerId)
         {
-            //ActionParameters param = new ActionParameters();
-            //param.Subject = "GUI";
-            //param.ActionType = "Deal";
-            //param.Target = playerId.ToString();
-            //FAtiMAConnector.ActionSucceeded(param);
-
             if (playerId == myIdOnUnity)
             {
                 //if (random.Next(100) <= 40)
@@ -214,11 +188,6 @@ namespace ThalamusFAtiMA
 
         public void ReceiveRobotCards()
         {
-            //ActionParameters param = new ActionParameters();
-            //param.Subject = "GUI";
-            //param.ActionType = "ReceiveRobotCards";
-            //FAtiMAConnector.ActionSucceeded(param);
-
             TypifiedPublisher.GazeAtTarget("cardPosition");
 
             int playerId1 = random.Next(0, 4);
@@ -237,16 +206,16 @@ namespace ThalamusFAtiMA
 
         public void NextPlayer(int id)
         {
-            //ActionParameters param = new ActionParameters();
-            //param.Subject = "GUI";
-            //param.ActionType = "NextPlayer";
-            //param.Target = id.ToString();
-            //FAtiMAConnector.ActionSucceeded(param);
-
+            while (!MoveExpectaionsReceived)
+            {
+                
+            }
+            MoveExpectaionsReceived = false;
             if (id == myIdOnUnity)
             {
                 //if (random.Next(100) <= 40)
                 {
+                    TypifiedPublisher.PlayAnimation("", "ownCardsAnalysis");
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "SELF", new string[] { }, new string[] { });
                 }
             }
@@ -254,6 +223,7 @@ namespace ThalamusFAtiMA
             {
                 //if (random.Next(100) <= 40)
                 {
+                    TypifiedPublisher.GazeAtTarget("player" + id);
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "TEAM_PLAYER", new string[] { }, new string[] { });
                 }
             }
@@ -261,6 +231,7 @@ namespace ThalamusFAtiMA
             {
                 //if (random.Next(100) <= 40)
                 {
+                    TypifiedPublisher.GazeAtTarget("player" + id);
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "OPPONENT", new string[] { }, new string[] { });
                 }
             }
@@ -268,20 +239,7 @@ namespace ThalamusFAtiMA
 
         public void Play(int id, string card)
         {
-            //ActionParameters param = new ActionParameters();
-            //if (id == myIdOnUnity)
-            //{
-            //    param.Subject = "SELF";
-            //}
-            //else
-            //{
-            //    param.Subject = "User" + id;
-            //}
-            //param.ActionType = "Play";
-            //SuecaTypes.Card desirializedCard = SuecaTypes.JsonSerializable.DeserializeFromJson<SuecaTypes.Card>(card);
-            //param.AddParameter(desirializedCard.Rank.ToString());
-            //param.AddParameter(desirializedCard.Suit.ToString());
-            //FAtiMAConnector.ActionSucceeded(param);
+            TypifiedPublisher.GazeAtTarget("cardPosition");
         }
 
         void IFMLSpeechEvents.UtteranceFinished(string id)

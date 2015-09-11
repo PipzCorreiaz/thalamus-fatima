@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace ThalamusFAtiMA.Emotions
@@ -49,6 +50,24 @@ namespace ThalamusFAtiMA.Emotions
                 }
             }
             return strongest;
+        }
+
+        public Emotion GetEmotionCausedBy(string cause)
+        {
+            Emotion chosen = null;
+            foreach (Emotion emotion in emotions)
+            {
+                if (emotion != null)
+                {
+                    string eventName = emotion.Cause.Split(' ')[1];
+                    //Console.WriteLine("GetEmotionCausedBy >>>>>> emotion " + emotion.Type + "caused by " + eventName);
+                    if (chosen == null || (eventName == cause && emotion.Intensity > chosen.Intensity))
+                    {
+                        chosen = emotion;
+                    }
+                }
+            }
+            return chosen;
         }
 
         public List<Emotion> GetTheThreeStrongestEmotions()

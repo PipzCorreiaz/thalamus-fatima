@@ -5,18 +5,6 @@ using EmoteCommonMessages;
 
 namespace ThalamusFAtiMA
 {
-    //public interface IFMLSpeech : IAction
-    //{
-    //    void PerformUtterance(string utterance, string category);
-    //}
-
-    //public interface IAnimationActions : IAction
-    //{
-    //    void PlayAnimation(string id, string animation);
-    //    void PlayAnimationQueued(string id, string animation);
-    //}
-
-
 
     public interface IThalamusFAtiMAPublisher : IThalamusPublisher, ISuecaActions, IFMLSpeech, Thalamus.BML.IAnimationActions, Thalamus.BML.IPostureActions, EmoteCommonMessages.IGazeStateActions { }
 
