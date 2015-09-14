@@ -314,35 +314,15 @@ namespace ThalamusFAtiMA
                     _previousEmotionalMsg = msg;
 
                     _emotionalState = (EmotionalState)EmotionalStateParser.Instance.Parse(msg);
-                    em = _emotionalState.GetEmotionCausedBy("MoveExpectations");
-
-                    if (em == null)
+                    
+                    em = _emotionalState.GetStrongestEmotion();
+                    if (em != null && !em.Type.Equals(_previousEmotion))
                     {
-                        em = _emotionalState.GetStrongestEmotion();
-                        if (em != null && !em.Type.Equals(_previousEmotion))
-                        {
-                            Console.WriteLine("FAtiMA Connector - It will executed the emotional state " + em.Type + " caused by other events");
-                            _previousEmotion = em.Type;
-                            PlayOnlyPosture(em);
-                        }
-                        else if (em == null)
-                        {
-                            _previousEmotion = "";
-                        }
-                    }
-                    else 
-                    {
-                        ThalamusConnector.MoveExpectaionsReceived = true;
-                        if (!em.Type.Equals(_previousEmotion))
-                        {
-                            Console.WriteLine("FAtiMA Connector - It will executed the emotional state " + em.Type + " caused by MoveExpectations");
-                            _previousEmotion = em.Type;
-                            PlayExpressionWithUtterance(em);                        
-                        }
-
+                        Console.WriteLine("FAtiMA Connector - It will executed the emotional state " + em.Type + " caused by " + em.Cause);
+                        _previousEmotion = em.Type;
+                        ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
                     }
                     
-                    //em = _emotionalState.GetStrongestEmotion();
                    
                     
 
@@ -429,7 +409,7 @@ namespace ThalamusFAtiMA
             }
             else if (msg.StartsWith("<Action"))
             {
-                Console.WriteLine("FAtiMA Connector - Received an action!");
+                //Console.WriteLine("FAtiMA Connector - Received an action!");
                 
                 parameters = (ActionParameters) ActionParametersParser.Instance.Parse(msg);
 
@@ -449,7 +429,6 @@ namespace ThalamusFAtiMA
         private string convertRankToPortuguese(string englishRank)
         {
             string portugueseRank = "";
-            Console.WriteLine("convertRankToPortuguese: englishRank is " + englishRank);
             switch (englishRank)
             {
                 case "Two":
@@ -471,7 +450,7 @@ namespace ThalamusFAtiMA
                     portugueseRank = "uma dama";
                     break;
                 case "Jack":
-                    portugueseRank = "um valéte";
+                    portugueseRank = "um váléte";
                     break;
                 case "King":
                     portugueseRank = "um rei";
