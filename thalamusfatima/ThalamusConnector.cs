@@ -111,31 +111,31 @@ namespace ThalamusFAtiMA
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "OTHER_CHEAT", new string[] { }, new string[] { });
                 }
-                if (team1Score == -1)
+                else if (team1Score == -1)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "TEAM_CHEAT", new string[] { }, new string[] { });
                 }
-                if (team0Score == 120)
+                else if (team0Score == 120)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "QUAD_LOST", new string[] { }, new string[] { });
                 }
-                if (team1Score == 120)
+                else if (team1Score == 120)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "QUAD_WIN", new string[] { }, new string[] { });
                 }
-                if (team0Score > 90)
+                else if (team0Score > 90)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "DOUBLE_LOST", new string[] { }, new string[] { });
                 }
-                if (team1Score > 90)
+                else if (team1Score > 90)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "DOUBLE_WIN", new string[] { }, new string[] { });
                 }
-                if (team0Score > 60)
+                else if (team0Score > 60)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "SINGLE_LOST", new string[] { }, new string[] { });
                 }
-                if (team1Score > 60)
+                else if (team1Score > 60)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "SINGLE_WIN", new string[] { }, new string[] { });
                 }
@@ -255,7 +255,8 @@ namespace ThalamusFAtiMA
 
         public void ReceiveRobotCards()
         {
-            TypifiedPublisher.GazeAtTarget("cardPosition");
+            //TypifiedPublisher.GazeAtTarget("cardPosition");
+            TypifiedPublisher.GazeAtTarget("cardsZone");
 
             int playerId1 = random.Next(0, 4);
             int playerId2 = random.Next(0, 4);
@@ -280,7 +281,6 @@ namespace ThalamusFAtiMA
                 if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "SELF", new string[] { }, new string[] { });
-                    TypifiedPublisher.GazeAtTarget("cardPosition");
                 }
             }
             else if (id == (myIdOnUnity + 2) % 4)
@@ -289,7 +289,6 @@ namespace ThalamusFAtiMA
                 if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "TEAM_PLAYER", new string[] { }, new string[] { });
-                    TypifiedPublisher.GazeAtTarget("cardPosition");
                 }
             }
             else
@@ -298,14 +297,18 @@ namespace ThalamusFAtiMA
                 if (random.Next(100) <= 40)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "OPPONENT", new string[] { }, new string[] { });
-                    TypifiedPublisher.GazeAtTarget("cardPosition");
                 }
             }
         }
 
         public void Play(int id, string card)
         {
-            TypifiedPublisher.GazeAtTarget("cardPosition");
+            TypifiedPublisher.GazeAtTarget("cardsZone");
+            if (random.Next(100) <= 50)
+            {
+                TypifiedPublisher.GlanceAtTarget("cards3");
+                //TypifiedPublisher.PlayAnimation("", "ownCarsAnalysis");
+            }
         }
 
         void IFMLSpeechEvents.UtteranceFinished(string id)

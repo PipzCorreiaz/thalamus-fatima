@@ -420,7 +420,9 @@ namespace ThalamusFAtiMA
                     string rank = parameters.Parameters[1];
                     string suit = parameters.Parameters[2];
 
+
                     ThalamusConnector.TypifiedPublisher.Play(3, correctJson);
+                    ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
                     ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|"}, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit)});
                 }
             }
