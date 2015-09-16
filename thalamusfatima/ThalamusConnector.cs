@@ -9,7 +9,7 @@ using EmoteCommonMessages;
 
 namespace ThalamusFAtiMA
 {
-    public class ThalamusConnector : ThalamusClient, IIAActions, ISuecaPerceptions, IFMLSpeechEvents //, ISpeakEvents
+    public class ThalamusConnector : ThalamusClient, IIAActions, IFMLSpeechEvents //, ISpeakEvents
     {
         private int myIdOnUnity;
         private Random random;
@@ -52,7 +52,7 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.ActionSucceeded(param);
         }
 
-        public void SessionStart(int numGames)
+        public void ForwardSessionStart(int numGames)
         {
             NumGamesPerSession = numGames;
             PlayedGames = 0;
@@ -66,7 +66,7 @@ namespace ThalamusFAtiMA
             TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionStart", "GREETING", new string[] {}, new string[] {});
         }
 
-        public void GameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
+        public void ForwardGameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
         {
             myIdOnUnity = playerId;
 
@@ -85,7 +85,7 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.ActionSucceeded(param);
         }
 
-        public void GameEnd(int team0Score, int team1Score)
+        public void ForwardGameEnd(int team0Score, int team1Score)
         {
             if (team0Score != 60)
             {
@@ -146,7 +146,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void SessionEnd(int team0Score, int team1Score)
+        public void ForwardSessionEnd(int team0Score, int team1Score)
         {
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
@@ -175,7 +175,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void Shuffle(int playerId)
+        public void ForwardShuffle(int playerId)
         {
             if (playerId == myIdOnUnity)
             {
@@ -202,7 +202,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void Cut(int playerId)
+        public void ForwardCut(int playerId)
         {
             if (playerId == myIdOnUnity)
             {
@@ -230,7 +230,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void Deal(int playerId)
+        public void ForwardDeal(int playerId)
         {
             if (playerId == myIdOnUnity)
             {
@@ -253,7 +253,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ReceiveRobotCards()
+        public void ForwardReceiveRobotCards()
         {
             //TypifiedPublisher.GazeAtTarget("cardPosition");
             TypifiedPublisher.GazeAtTarget("cardsZone");
@@ -272,7 +272,7 @@ namespace ThalamusFAtiMA
             TypifiedPublisher.PerformUtteranceFromLibrary("", "ReceiveCards", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
         }
 
-        public void NextPlayer(int id)
+        public void ForwardNextPlayer(int id)
         {
             ActionParameters param = new ActionParameters();
             param.Subject = "User" + id;
@@ -322,15 +322,15 @@ namespace ThalamusFAtiMA
             //}
         }
 
-        public void Play(int id, string card)
-        {
-            TypifiedPublisher.GazeAtTarget("cardsZone");
-            if (random.Next(100) <= 50)
-            {
-                TypifiedPublisher.GlanceAtTarget("cards3");
-                //TypifiedPublisher.PlayAnimation("", "ownCarsAnalysis");
-            }
-        }
+        //public void Play(int id, string card)
+        //{
+        //    TypifiedPublisher.GazeAtTarget("cardsZone");
+        //    if (random.Next(100) <= 50)
+        //    {
+        //        TypifiedPublisher.GlanceAtTarget("cards3");
+        //        //TypifiedPublisher.PlayAnimation("", "ownCarsAnalysis");
+        //    }
+        //}
 
         void IFMLSpeechEvents.UtteranceFinished(string id)
         {
