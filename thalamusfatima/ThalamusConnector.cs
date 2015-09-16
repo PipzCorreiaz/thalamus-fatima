@@ -275,7 +275,7 @@ namespace ThalamusFAtiMA
         public void NextPlayer(int id)
         {
             ActionParameters param = new ActionParameters();
-            param.Subject = "GUI";
+            param.Subject = "User" + id;
             param.ActionType = "NextPlayer";
             if (id == myIdOnUnity)
             {
