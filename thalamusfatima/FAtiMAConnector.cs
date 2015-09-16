@@ -425,18 +425,15 @@ namespace ThalamusFAtiMA
                     ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
                     ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit) });
                     this.ActionSucceeded(parameters);
-                    //Console.WriteLine("FAtiMA Connector - Received an action to play!");
                 }
                 else if (parameters.ActionType.Equals("NextPlayerAct"))
                 {
                     string utteranceSubcategory = parameters.Target;
-                    if (utteranceSubcategory == "EMYS")
+                    if (utteranceSubcategory != "EMYS")
                     {
-                        utteranceSubcategory = "SELF";
+                        ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { }, new string[] { });
+                        this.ActionSucceeded(parameters);
                     }
-                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { }, new string[] { });
-                    this.ActionSucceeded(parameters);
-                    //Console.WriteLine("FAtiMA Connector - Received an action to NEXTPLAYERACT with target " + utteranceSubcategory + " and subject " + parameters.Subject);
                 }
             }
         }
