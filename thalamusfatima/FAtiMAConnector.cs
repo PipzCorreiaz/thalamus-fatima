@@ -409,7 +409,7 @@ namespace ThalamusFAtiMA
             }
             else if (msg.StartsWith("<Action"))
             {
-                //Console.WriteLine("FAtiMA Connector - Received an action!");
+                //Console.WriteLine("FAtiMA Connector - Received an action msg: " + msg);
                 
                 parameters = (ActionParameters) ActionParametersParser.Instance.Parse(msg);
 
@@ -423,7 +423,20 @@ namespace ThalamusFAtiMA
 
                     ThalamusConnector.TypifiedPublisher.Play(3, correctJson);
                     ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
-                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|"}, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit)});
+                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit) });
+                    this.ActionSucceeded(parameters);
+                    //Console.WriteLine("FAtiMA Connector - Received an action to play!");
+                }
+                else if (parameters.ActionType.Equals("NextPlayerAct"))
+                {
+                    string utteranceSubcategory = parameters.Target;
+                    if (utteranceSubcategory == "EMYS")
+                    {
+                        utteranceSubcategory = "SELF";
+                    }
+                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { }, new string[] { });
+                    this.ActionSucceeded(parameters);
+                    //Console.WriteLine("FAtiMA Connector - Received an action to NEXTPLAYERACT with target " + utteranceSubcategory + " and subject " + parameters.Subject);
                 }
             }
         }

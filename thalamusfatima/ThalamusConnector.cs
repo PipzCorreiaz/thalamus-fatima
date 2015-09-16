@@ -274,31 +274,52 @@ namespace ThalamusFAtiMA
 
         public void NextPlayer(int id)
         {
+            ActionParameters param = new ActionParameters();
+            param.Subject = "GUI";
+            param.ActionType = "NextPlayer";
             if (id == myIdOnUnity)
             {
                 TypifiedPublisher.GazeAtTarget("cards3");
                 TypifiedPublisher.PlayAnimation("", "ownCardsAnalysis");
-                if (random.Next(100) <= 40)
-                {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "SELF", new string[] { }, new string[] { });
-                }
+                param.Target = "SELF";
             }
             else if (id == (myIdOnUnity + 2) % 4)
             {
                 TypifiedPublisher.GazeAtTarget("player" + id);
-                if (random.Next(100) <= 40)
-                {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "TEAM_PLAYER", new string[] { }, new string[] { });
-                }
+                param.Target = "TEAM_PLAYER";
             }
             else
             {
                 TypifiedPublisher.GazeAtTarget("player" + id);
-                if (random.Next(100) <= 40)
-                {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "OPPONENT", new string[] { }, new string[] { });
-                }
+                param.Target = "OPPONENT";
             }
+            FAtiMAConnector.ActionSucceeded(param);
+
+            //if (id == myIdOnUnity)
+            //{
+            //    TypifiedPublisher.GazeAtTarget("cards3");
+            //    TypifiedPublisher.PlayAnimation("", "ownCardsAnalysis");
+            //    if (random.Next(100) <= 40)
+            //    {
+            //        TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "SELF", new string[] { }, new string[] { });
+            //    }
+            //}
+            //else if (id == (myIdOnUnity + 2) % 4)
+            //{
+            //    TypifiedPublisher.GazeAtTarget("player" + id);
+            //    if (random.Next(100) <= 40)
+            //    {
+            //        TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "TEAM_PLAYER", new string[] { }, new string[] { });
+            //    }
+            //}
+            //else
+            //{
+            //    TypifiedPublisher.GazeAtTarget("player" + id);
+            //    if (random.Next(100) <= 40)
+            //    {
+            //        TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", "OPPONENT", new string[] { }, new string[] { });
+            //    }
+            //}
         }
 
         public void Play(int id, string card)
