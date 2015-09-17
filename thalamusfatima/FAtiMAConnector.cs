@@ -318,8 +318,12 @@ namespace ThalamusFAtiMA
                     em = _emotionalState.GetStrongestEmotion();
                     if (em != null && !em.Type.Equals(_previousEmotion))
                     {
-                        Console.WriteLine("FAtiMA Connector - It will executed the emotional state " + em.Type + " caused by " + em.Cause);
                         _previousEmotion = em.Type;
+                        if (ThalamusConnector.GameActive && em.Intensity >= 5 && (em.Type.Equals("GLOATING") || em.Type.Equals("RESENTMENT")|| em.Type.Equals("PITTY") || em.Type.Equals("HAPPY_FOR")))
+                        {
+                            Console.WriteLine("PERFOMING A " + em.Type);
+                            PlayExpressionWithUtterance(em);
+                        }
                         ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
                     }
                     
@@ -429,9 +433,10 @@ namespace ThalamusFAtiMA
                 else if (parameters.ActionType.Equals("NextPlayerAct"))
                 {
                     string utteranceSubcategory = parameters.Target;
+                    string nextPlayerId = parameters.Parameters[0];
                     if (utteranceSubcategory != "EMYS")
                     {
-                        ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { }, new string[] { });
+                        ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|" }, new string[] { nextPlayerId });
                         this.ActionSucceeded(parameters);
                     }
                 }
@@ -528,9 +533,15 @@ namespace ThalamusFAtiMA
 
             int intensity = (int)Math.Ceiling(em.Intensity / 2.0f);
             
+            string subcategory = em.Type;
             string eventName = em.Cause.Split(' ')[1];
             string playerId = em.Cause.Split(' ')[2];
-            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Play", em.Type, new string[] { "|intensity|" }, new string[] { intensity.ToString() });
+
+            if (playerId == "3")
+            {
+                subcategory += "_SELF";
+            }
+            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Play", subcategory, new string[] { "|intensity|, |playerId|" }, new string[] { intensity.ToString(), playerId });
             
 
             //quando recebe as suas cartas
