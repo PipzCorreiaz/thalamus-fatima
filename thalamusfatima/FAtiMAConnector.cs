@@ -319,7 +319,7 @@ namespace ThalamusFAtiMA
                     if (em != null && !em.Type.Equals(_previousEmotion))
                     {
                         _previousEmotion = em.Type;
-                        if (ThalamusConnector.GameActive && em.Intensity >= 5 && (em.Type.Equals("GLOATING") || em.Type.Equals("RESENTMENT")|| em.Type.Equals("PITTY") || em.Type.Equals("HAPPY_FOR")))
+                        if (ThalamusConnector.GameActive && em.Intensity >= 7 && (em.Type.Equals("GLOATING") || em.Type.Equals("RESENTMENT")|| em.Type.Equals("PITTY") || em.Type.Equals("HAPPY_FOR")))
                         {
                             Console.WriteLine("PERFOMING A " + em.Type);
                             PlayExpressionWithUtterance(em);
@@ -434,9 +434,17 @@ namespace ThalamusFAtiMA
                 {
                     string utteranceSubcategory = parameters.Target;
                     string nextPlayerId = parameters.Parameters[0];
-                    if (utteranceSubcategory != "EMYS")
+                    if (utteranceSubcategory != "EMYS" && ThalamusConnector.GameActive)
                     {
-                        ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|" }, new string[] { nextPlayerId });
+
+                        if (ThalamusConnector.random.Next(100) <= 50)
+                        {
+                            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|" }, new string[] { nextPlayerId });
+                        }
+                        else
+                        {
+                            ThalamusConnector.TypifiedPublisher.GazeAtTarget("player" + nextPlayerId);
+                        }
                         this.ActionSucceeded(parameters);
                     }
                 }

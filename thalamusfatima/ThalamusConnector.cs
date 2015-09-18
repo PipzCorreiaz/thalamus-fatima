@@ -5,6 +5,7 @@ using SuecaMessages;
 using ThalamusFAtiMA.Actions;
 using ThalamusFAtiMA.Utils;
 using EmoteCommonMessages;
+using System.Threading;
 
 
 namespace ThalamusFAtiMA
@@ -12,12 +13,13 @@ namespace ThalamusFAtiMA
     public class ThalamusConnector : ThalamusClient, IIAActions, IFMLSpeechEvents //, ISpeakEvents
     {
         private int myIdOnUnity;
-        private Random random;
+        public Random random;
         public IThalamusFAtiMAPublisher TypifiedPublisher {  get;  private set; }
         public FAtiMAConnector FAtiMAConnector { private get; set; }
         public int NumGamesPerSession;
         public int PlayedGames;
         public bool GameActive;
+        public bool Renounce;
         
         
         public ThalamusConnector(string clientName, string character = "") : base(clientName)
@@ -29,6 +31,7 @@ namespace ThalamusFAtiMA
             SetPublisher<IThalamusFAtiMAPublisher>();
             TypifiedPublisher = new ThalamusFAtiMAPublisher(Publisher);
             GameActive = false;
+            Renounce = false;
         } 
 
         public override void Dispose()
@@ -43,7 +46,7 @@ namespace ThalamusFAtiMA
 
         void IIAActions.MoveExpectations(int playerId, string desirability, string desirabilityForOther, string successProbability, string failureProbability)
         {
-            TypifiedPublisher.GazeAtTarget("cardsZone");
+            //sTypifiedPublisher.GazeAtTarget("cardsZone");
 
             ActionParameters param = new ActionParameters();
             param.Subject = "User" + playerId;
@@ -58,6 +61,7 @@ namespace ThalamusFAtiMA
 
         public void ForwardSessionStart(int numGames)
         {
+            Renounce = false;
             NumGamesPerSession = numGames;
             PlayedGames = 0;
             ActionParameters param = new ActionParameters();
@@ -73,6 +77,7 @@ namespace ThalamusFAtiMA
         public void ForwardGameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
         {
             myIdOnUnity = playerId;
+            Renounce = false;
 
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
@@ -93,10 +98,8 @@ namespace ThalamusFAtiMA
         public void ForwardGameEnd(int team0Score, int team1Score)
         {
             GameActive = false;
-            if (team0Score != 60)
-            {
-                PlayedGames++;
-            }
+            PlayedGames++;
+            
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
             param.ActionType = "GameEnd";
@@ -111,7 +114,7 @@ namespace ThalamusFAtiMA
             }
 
             FAtiMAConnector.ActionSucceeded(param);
-            if (PlayedGames < NumGamesPerSession)
+            if (!Renounce && PlayedGames < NumGamesPerSession)
             {
                 if (team0Score == -1)
                 {
@@ -292,36 +295,58 @@ namespace ThalamusFAtiMA
             }
             else if (id == (myIdOnUnity + 2) % 4)
             {
-                TypifiedPublisher.GazeAtTarget("player" + id);
+                //TypifiedPublisher.GazeAtTarget("player" + id);
+                //TypifiedPublisher.GlanceAtTarget("player" + id);
+                //TypifiedPublisher.GlanceAtTarget("cards3");
                 param.Target = "TEAM_PLAYER";
             }
             else
             {
-                TypifiedPublisher.GazeAtTarget("player" + id);
+                //TypifiedPublisher.GazeAtTarget("player" + id);
+                //TypifiedPublisher.GlanceAtTarget("player" + id);
                 param.Target = "OPPONENT";
             }
             FAtiMAConnector.ActionSucceeded(param);
+            Thread.Sleep(1000);
+            TypifiedPublisher.GlanceAtTarget("cards3");
+            
+            
         }
 
         public void ForwardTrickEnd(int winnerId, int trickPoints)
         {
             if (winnerId == myIdOnUnity)
             {
+                if (random.Next(100) <= 70)
+                {
                 TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "SELF", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                }
             }
             else if (winnerId == (myIdOnUnity + 2) % 4)
             {
-                TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "TEAM_PLAYER", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+
+                if (random.Next(100) <= 70)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "TEAM_PLAYER", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                }
             }
             else
             {
                 if (trickPoints == 0)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT_ZERO", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+
+                    if (random.Next(100) <= 70)
+                    {
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT_ZERO", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                    }
                 }
                 else
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+
+                    if (random.Next(100) <= 70)
+                    {
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                    }
                 }
             }
         }
@@ -350,5 +375,22 @@ namespace ThalamusFAtiMA
         }
 
 
+        public void ForwardRenounce(int playerId)
+        {
+            Renounce = true;
+            if (playerId == myIdOnUnity)
+            {
+                Console.WriteLine("Bot has just renounced!!!  WHAT?!");
+                TypifiedPublisher.PlayAnimation("", "surprise3");
+            }
+            else if (playerId == (myIdOnUnity + 2) % 4)
+            {
+                TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "TEAM_CHEAT", new string[] { "|playerId|" }, new string[] { playerId.ToString() });
+            }
+            else
+            {
+                TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "OTHER_CHEAT", new string[] { "|playerId|" }, new string[] { playerId.ToString() });
+            }
+        }
     }
 }
