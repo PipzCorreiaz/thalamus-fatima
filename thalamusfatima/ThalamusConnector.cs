@@ -19,6 +19,7 @@ namespace ThalamusFAtiMA
         public int NumGamesPerSession;
         public int PlayedGames;
         public bool GameActive;
+        public bool TrickActive;
         public bool Renounce;
         
         
@@ -31,6 +32,7 @@ namespace ThalamusFAtiMA
             SetPublisher<IThalamusFAtiMAPublisher>();
             TypifiedPublisher = new ThalamusFAtiMAPublisher(Publisher);
             GameActive = false;
+            TrickActive = false;
             Renounce = false;
         } 
 
@@ -283,6 +285,7 @@ namespace ThalamusFAtiMA
 
         public void ForwardNextPlayer(int id)
         {
+            TrickActive = true;
             ActionParameters param = new ActionParameters();
             param.Subject = "User" + id;
             param.ActionType = "NextPlayer";
@@ -315,11 +318,23 @@ namespace ThalamusFAtiMA
 
         public void ForwardTrickEnd(int winnerId, int trickPoints)
         {
+            string points;
+            TrickActive = false;
+
+            if (trickPoints == 0)
+            {
+                points = "palha";
+            }
+            else
+            {
+                points = trickPoints.ToString() + " pontos";
+            }
+
             if (winnerId == myIdOnUnity)
             {
                 if (random.Next(100) <= 70)
                 {
-                TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "SELF", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "SELF", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), points });
                 }
             }
             else if (winnerId == (myIdOnUnity + 2) % 4)
@@ -327,7 +342,7 @@ namespace ThalamusFAtiMA
 
                 if (random.Next(100) <= 70)
                 {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "TEAM_PLAYER", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "TEAM_PLAYER", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), points });
                 }
             }
             else
@@ -337,7 +352,7 @@ namespace ThalamusFAtiMA
 
                     if (random.Next(100) <= 70)
                     {
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT_ZERO", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT_ZERO", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), points });
                     }
                 }
                 else
@@ -345,7 +360,7 @@ namespace ThalamusFAtiMA
 
                     if (random.Next(100) <= 70)
                     {
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), trickPoints.ToString() });
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), points });
                     }
                 }
             }
@@ -391,6 +406,12 @@ namespace ThalamusFAtiMA
             {
                 TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "OTHER_CHEAT", new string[] { "|playerId|" }, new string[] { playerId.ToString() });
             }
+        }
+
+
+        public void ForwardResetTrick()
+        {
+            TypifiedPublisher.PerformUtteranceFromLibrary("", "ResetTrick", "AGREE", new string[] { }, new string[] { });
         }
     }
 }

@@ -319,7 +319,7 @@ namespace ThalamusFAtiMA
                     if (em != null && !em.Type.Equals(_previousEmotion))
                     {
                         _previousEmotion = em.Type;
-                        if (ThalamusConnector.GameActive && em.Intensity >= 7 && (em.Type.Equals("GLOATING") || em.Type.Equals("RESENTMENT")|| em.Type.Equals("PITTY") || em.Type.Equals("HAPPY_FOR")))
+                        if (ThalamusConnector.TrickActive && ThalamusConnector.GameActive && em.Intensity >= 7 && (em.Type.Equals("GLOATING") || em.Type.Equals("RESENTMENT")|| em.Type.Equals("PITTY") || em.Type.Equals("HAPPY_FOR")))
                         {
                             Console.WriteLine("PERFOMING A " + em.Type);
                             PlayExpressionWithUtterance(em);
