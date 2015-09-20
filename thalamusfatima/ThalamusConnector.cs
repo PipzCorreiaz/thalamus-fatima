@@ -118,15 +118,7 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.ActionSucceeded(param);
             if (!Renounce && PlayedGames < NumGamesPerSession)
             {
-                if (team0Score == -1)
-                {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "OTHER_CHEAT", new string[] { }, new string[] { });
-                }
-                else if (team1Score == -1)
-                {
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "TEAM_CHEAT", new string[] { }, new string[] { });
-                }
-                else if (team0Score == 120)
+                if (team0Score == 120)
                 {
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "QUAD_LOST", new string[] { }, new string[] { });
                 }
