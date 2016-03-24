@@ -425,9 +425,9 @@ namespace ThalamusFAtiMA
                     string suit = parameters.Parameters[2];
 
 
-                    ThalamusConnector.TypifiedPublisher.Play(3, correctJson);
-                    ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
+                    //ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
                     ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit) });
+                    ThalamusConnector.TypifiedPublisher.Play(3, correctJson);
                     this.ActionSucceeded(parameters);
                 }
                 else if (parameters.ActionType.Equals("NextPlayerAct"))

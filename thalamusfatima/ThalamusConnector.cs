@@ -2,6 +2,7 @@
 using Thalamus;
 using Thalamus.BML;
 using SuecaMessages;
+using SuecaTypes;
 using ThalamusFAtiMA.Actions;
 using ThalamusFAtiMA.Utils;
 using EmoteCommonMessages;
@@ -19,6 +20,7 @@ namespace ThalamusFAtiMA
         public int NumGamesPerSession;
         public int PlayedGames;
         public bool GameActive;
+        public bool SessionActive;
         public bool TrickActive;
         public bool Renounce;
         
@@ -32,6 +34,7 @@ namespace ThalamusFAtiMA
             SetPublisher<IThalamusFAtiMAPublisher>();
             TypifiedPublisher = new ThalamusFAtiMAPublisher(Publisher);
             GameActive = false;
+            SessionActive = false;
             TrickActive = false;
             Renounce = false;
         } 
@@ -63,6 +66,7 @@ namespace ThalamusFAtiMA
 
         public void ForwardSessionStart(int numGames)
         {
+            SessionActive = false;
             Renounce = false;
             NumGamesPerSession = numGames;
             PlayedGames = 0;
@@ -74,9 +78,10 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.ActionSucceeded(param);
 
             TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionStart", "GREETING", new string[] {}, new string[] {});
+            SessionActive = true;
         }
 
-        public void ForwardGameStart(int gameId, int playerId, int teamId, string trump, string[] cards)
+        public void ForwardGameStart(int gameId, int playerId, int teamId, string trumpCard, int trumpCardPlayer, string[] cards)
         {
             myIdOnUnity = playerId;
             Renounce = false;
@@ -180,28 +185,34 @@ namespace ThalamusFAtiMA
 
         public void ForwardShuffle(int playerId)
         {
-            if (playerId == myIdOnUnity)
+            while (!SessionActive)
+            { }
+
+            if (PlayedGames != 0)
             {
-                int playerId1 = (myIdOnUnity + 2) % 4; //team player
-                TypifiedPublisher.GazeAtTarget("player" + playerId1);
-                if (random.Next(100) <= 66)
+                if (playerId == myIdOnUnity)
                 {
-                    int playerId2 = random.Next(0, 4);
-                    while (playerId2 == myIdOnUnity && playerId2 == playerId1) //choose someone besides me and my partner
+                    int playerId1 = (myIdOnUnity + 2) % 4; //team player
+                    TypifiedPublisher.GazeAtTarget("player" + playerId1);
+                    if (random.Next(100) <= 66)
                     {
-                        playerId1 = random.Next(0, 4);
+                        int playerId2 = random.Next(0, 4);
+                        while (playerId2 == myIdOnUnity && playerId2 == playerId1) //choose someone besides me and my partner
+                        {
+                            playerId1 = random.Next(0, 4);
+                        }
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
                     }
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
                 }
-            }
-            else
-            {
-                TypifiedPublisher.GazeAtTarget("player" + playerId);
-                if (random.Next(100) <= 66)
+                else
                 {
-                    int playerId1 = playerId;
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "OTHER", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
-                }
+                    TypifiedPublisher.GazeAtTarget("player" + playerId);
+                    if (random.Next(100) <= 66)
+                    {
+                        int playerId1 = playerId;
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "OTHER", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
+                    }
+                }    
             }
         }
 
@@ -252,8 +263,78 @@ namespace ThalamusFAtiMA
                     int playerId2 = (myIdOnUnity + 2) % 4; //team player
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "OTHER", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId.ToString(), playerId2.ToString() });
                 }
+            }
+        }
+
+        public void ForwardTrumpCard(string trumpCard, int playerId)
+        {
+            bool ace = false, seven = false, two = false;
+            SuecaTypes.Card card = JsonSerializable.DeserializeFromJson<SuecaTypes.Card>(trumpCard);
+            if (card.Rank == SuecaTypes.Rank.Ace)
+            {
+                ace = true;
+            }
+            else if (card.Rank == SuecaTypes.Rank.Seven)
+            {
+                seven = true;
+            }
+            else if (card.Rank == SuecaTypes.Rank.Two || card.Rank == SuecaTypes.Rank.Three)
+            {
+                two = true;
+            }
+
+            int partnerId = (myIdOnUnity + 2) % 4;
+            int opponent1Id = (myIdOnUnity + 1) % 4;
+            int opponent2Id = (myIdOnUnity + 3) % 4;
+
+            TypifiedPublisher.GazeAtTarget("player" + playerId);
+
+            if (playerId == myIdOnUnity)
+            {
+                if (ace)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+                else if (seven)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_SEVEN", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+                else if (two)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_TWO", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+            }
+            else if (playerId == partnerId)
+            {
+                if (ace)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "PARTNER_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+                else if (seven)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "PARTNER_SEVEN", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+                else if (two)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "PARTNER_TWO", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
 
             }
+            else
+            {
+                if (ace)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "OPPONENT_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+                else if (seven)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "OPPONENT_SEVEN", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+                else if (two)
+                {
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "OPPONENT_TWO", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                }
+            } 
         }
 
         public void ForwardReceiveRobotCards()
@@ -326,6 +407,7 @@ namespace ThalamusFAtiMA
             {
                 if (random.Next(100) <= 70)
                 {
+                    Thread.Sleep(1500);
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "SELF", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), points });
                 }
             }
@@ -334,6 +416,7 @@ namespace ThalamusFAtiMA
 
                 if (random.Next(100) <= 70)
                 {
+                    Thread.Sleep(1500);
                     TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "TEAM_PLAYER", new string[] { "|playerId|", "|trickPoints|" }, new string[] { winnerId.ToString(), points });
                 }
             }
