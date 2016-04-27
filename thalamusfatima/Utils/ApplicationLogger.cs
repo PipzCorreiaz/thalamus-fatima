@@ -56,7 +56,7 @@ namespace ThalamusFAtiMA.Utils
 			}
 			
             string dateTimeStr = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + " " + DateTime.Now.Hour + "_" +
-                                     DateTime.Now.Minute + "_" + DateTime.Now.Second;
+                                     DateTime.Now.Minute + "_" + DateTime.Now.Second + "_" + DateTime.Now.Millisecond;
 			
             sWriter = File.CreateText(dir + dateTimeStr + LOG_FILE);
 		}

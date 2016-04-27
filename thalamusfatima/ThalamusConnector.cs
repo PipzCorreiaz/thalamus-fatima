@@ -23,9 +23,10 @@ namespace ThalamusFAtiMA
         public bool SessionActive;
         public bool TrickActive;
         public bool Renounce;
-        
-        
-        public ThalamusConnector(string clientName, string character = "") : base(clientName)
+
+
+        public ThalamusConnector(string clientName, string character = "")
+            : base(clientName, character)
         {
             NumGamesPerSession = 1;
             PlayedGames = 0;

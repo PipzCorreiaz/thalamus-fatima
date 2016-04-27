@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CookComputing.XmlRpcV2">
-      <HintPath>..\..\thalamus-code\Binaries\Release\CookComputing.XmlRpcV2.dll</HintPath>
+      <HintPath>..\..\thalamus-code\Binaries\Debug\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
     <Reference Include="EmoteEvents">
       <HintPath>..\..\ENTS\Skene\EmoteEvents.dll</HintPath>
@@ -51,9 +51,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thalamus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\thalamus-code\Binaries\Release\Thalamus.dll</HintPath>
+    <Reference Include="Thalamus">
+      <HintPath>..\..\thalamus-code\Binaries\Debug\Thalamus.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

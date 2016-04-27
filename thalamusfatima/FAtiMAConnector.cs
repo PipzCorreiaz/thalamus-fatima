@@ -40,6 +40,7 @@ using ThalamusFAtiMA.Emotions;
 using ThalamusFAtiMA.Speech;
 using ThalamusFAtiMA.Speech.AMSummary;
 using ThalamusFAtiMA.Utils;
+using System.Xml;
 
 namespace ThalamusFAtiMA
 {
@@ -89,7 +90,7 @@ namespace ThalamusFAtiMA
 
         public string Sex { get; private set; }
         public string Role { get; private set; }
-
+        private string robotId;
         public string Name { get; private set; }
 
         public ThalamusConnector ThalamusConnector { private get; set; }
@@ -105,7 +106,6 @@ namespace ThalamusFAtiMA
         private EmotionalState _emotionalState;
         private string _previousEmotion = "";
 
-        private LanguageEngineMaster _languageEngine;
         public SpeechActParameters CurrentSpeechAct { get; set; }
 
         public Socket Socket
@@ -137,9 +137,10 @@ namespace ThalamusFAtiMA
 		public bool ConnectionReady {get; set;}
         //actions  
        
-        public FAtiMAConnector(ThalamusConnector thalamus, string name, string sex, string role, string version) 
+        public FAtiMAConnector(ThalamusConnector thalamus, string robotId, string name, string sex, string role, string version) 
 		{
             this.ThalamusConnector = thalamus;
+            this.robotId = robotId;
             this.receiverAlive = false;
 			this.ConnectionReady = false;
             //this.emotionalState = new Property<EmotionalState>(new EmotionalState());
@@ -152,9 +153,6 @@ namespace ThalamusFAtiMA
 
             this.PredefinedUtteranceSelector = new PredefinedUtteranceSelector(version);
             this.AMSummaryTemplateMatcher = new AMSummaryTemplateMatcher();
-
-            this._languageEngine = new LanguageEngineMaster("M", "M", "data/sueca/language/agent/en/language-set-1", "");
-            this._languageEngine.Load();
 
             this._version = version;
 
@@ -234,7 +232,7 @@ namespace ThalamusFAtiMA
 
             proc.StartInfo.Arguments = "/K java -cp \"FAtiMA-Modular.jar;xmlenc-0.52.jar;gson-2.2.4.jar;sqlite-jdbc-3.7.2.jar" +
                     "\"" +
-                    " FAtiMA.AgentLauncher Data/Sueca/ Scenarios.xml Sueca EMYS FAtiMA.db";
+                    " FAtiMA.AgentLauncher Data/Sueca/ Scenarios-" + robotId + ".xml Sueca EMYS-" + robotId + " FAtiMA.db";
 
            
 
@@ -347,71 +345,7 @@ namespace ThalamusFAtiMA
 				//Thread.Sleep(1000);
 				
                 //this.lookATAction.Start(parameters);
-            }
-            else if (msg.StartsWith("<SpeechAct"))
-            {
-                Console.WriteLine("FAtiMA Connector - Received a speech act!");
-
-                SpeechActParameters speechParams = (SpeechActParameters)SpeechActParser.Instance.Parse(msg);
-                if (speechParams.Meaning.Equals("episodesummary"))
-                {
-                    var amSummary = AMSummaryParser.Instance.Parse(speechParams.AMSummary) as AMSummary;
-                    if (amSummary != null)
-                    {
-                        var summaryText = this.AMSummaryTemplateMatcher.GenerateTextForSummary(amSummary);
-                        ApplicationLogger.Instance().WriteLine("Generated Summary:" + summaryText);
-                        System.Console.WriteLine(this.Name + ": " + summaryText);
-                        ThalamusConnector.TypifiedPublisher.PerformUtterance("", summaryText,"");
-                    }
-                    CurrentSpeechAct = speechParams;
-                    //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
-                    this.ActionSucceeded(speechParams);
-                    return;
-                }
-                else if (speechParams.Meaning.Equals("sharepreviousinteraction"))
-                {
-                    CurrentSpeechAct = speechParams;
-                    var utterance =
-                        "You know, the other day I was playing against another player. I wanted to win, but I wasn't very hopefull. Fortunately, he made a mistake and I was able to make a nice move, which made me feel really happy.";
-                    System.Console.WriteLine(this.Name + ": " + utterance);
-                    ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
-                    //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
-                    this.ActionSucceeded(speechParams);
-                    return;
-                }
-                else if (speechParams.Meaning.Equals("greeting"))
-                {
-                    CurrentSpeechAct = speechParams;
-                    var utterance =
-                        "Hi, I'm emys and I'm here to play with you. You are player 1, so press the button to start whenever you're ready.";
-                    System.Console.WriteLine(this.Name + ": " + utterance);
-                    ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
-                    //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
-                    this.ActionSucceeded(speechParams);
-                    return;
-                }
-                else if (speechParams.Meaning.Equals("asktowin"))
-                {
-                    CurrentSpeechAct = speechParams;
-                    var utterance =
-                        "Could you let me win the next game, please?";
-                    System.Console.WriteLine(this.Name + ": " + utterance);
-                    ThalamusConnector.TypifiedPublisher.PerformUtterance("", utterance, "");
-                    //hack used when FAtiMA is not connected to EMYS that is going to perform the speech act
-                    this.ActionSucceeded(speechParams);
-                    return;
-                }
-                else
-                {
-                    speechParams.Utterance = this._languageEngine.Say(speechParams);
-                }
-                CurrentSpeechAct = speechParams;
-                string finalUtterance = speechParams.Utterance.Replace("Board", "Board ");
-                finalUtterance = finalUtterance.Replace("&lt","<");
-                finalUtterance = finalUtterance.Replace("&gt",">");
-                ThalamusConnector.TypifiedPublisher.PerformUtterance("", finalUtterance, "");
-            }
-            else if (msg.StartsWith("<Action"))
+            }else if (msg.StartsWith("<Action"))
             {
                 //Console.WriteLine("FAtiMA Connector - Received an action msg: " + msg);
                 
@@ -596,6 +530,23 @@ namespace ThalamusFAtiMA
             }
         }
 
+        private void editScenarioFile(int port)
+        {
+            string newValue = string.Empty;
+            XmlDocument xmlDoc = new XmlDocument();
+
+            xmlDoc.Load("Data/Sueca/Scenarios-" + robotId + ".xml");
+
+            XmlNode node = xmlDoc.SelectSingleNode("Scenarios/Scenario/WorldSimulator");
+            node.Attributes[0].Value = port.ToString();
+            node = xmlDoc.SelectSingleNode("Scenarios/Scenario/Agent");
+            node.Attributes[0].Value = this.Name;
+            node.Attributes[1].Value = this.Name;
+            node.Attributes[5].Value = port.ToString();
+
+            xmlDoc.Save("Data/Sueca/Scenarios-" + robotId + ".xml");
+        }
+
 
         #region EventListeners
 
@@ -659,14 +610,30 @@ namespace ThalamusFAtiMA
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, port);
             // Create a TCP/IP socket... (Henrique Campos - changes the AddressFamily.Unspecified to ..
             this.serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            
             // Bind the socket...
-            this.serverSocket.Bind(localEndPoint);
-            this.serverSocket.Listen(PENDING_CONNECTION_QUEUE_LENGTH);
-
-            // accept new connection...
-            this.serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), this.serverSocket);
-            // wait until a connection is made before continuing...
-            ApplicationLogger.Instance().WriteLine("ThalamusFAtiMA: FAtiMA-side Server ready!");
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    this.serverSocket.Bind(localEndPoint);
+                    ApplicationLogger.Instance().WriteLine("FAtiMA: Succeded to bind socket on EndPoint - " + ipAddress.ToString() + ":" + port.ToString());
+                    editScenarioFile(port);
+                    
+                    this.serverSocket.Listen(PENDING_CONNECTION_QUEUE_LENGTH);
+                    // accept new connection...
+                    this.serverSocket.BeginAccept(new AsyncCallback(AcceptCallback), this.serverSocket);
+                    // wait until a connection is made before continuing...
+                    ApplicationLogger.Instance().WriteLine("ThalamusFAtiMA: FAtiMA-side Server ready!");
+                    break;
+                }
+                catch (SocketException e)
+                {
+                    ApplicationLogger.Instance().WriteLine("FAtiMA: Failed to bind socket on EndPoint - " + ipAddress.ToString() + ":" + port.ToString() + " with Exception ErrorCode: " + e.ErrorCode);
+                    port++;
+                    localEndPoint = new IPEndPoint(ipAddress, port);
+                }
+            }
         }
 
         protected void AcceptCallback(IAsyncResult ar)
@@ -674,7 +641,8 @@ namespace ThalamusFAtiMA
             // get the socket handler...
             try
             {
-                this.Socket = ((Socket)ar.AsyncState).EndAccept(ar);
+                Socket s = (Socket) ar.AsyncState;
+                this.Socket = s.EndAccept(ar);
                 ApplicationLogger.Instance().WriteLine("ThalamusFAtiMA: Incoming connection from FAtiMA ...");
 
                 // create the state object...
@@ -715,6 +683,7 @@ namespace ThalamusFAtiMA
                         // finished receiving...
                         receivedMsg = receivedMsg.Substring(0, EomIndex);
                         // create the corresponding character
+                        ApplicationLogger.Instance().WriteLine("FILIPA index: " + EomIndex + " msg: " + receivedMsg + " name: " + this.Name + " startsWith: " + receivedMsg.StartsWith(this.Name));
                         if (receivedMsg.StartsWith(this.Name))
                         {
                             //everything is ok, the agent that connected is the right agent
