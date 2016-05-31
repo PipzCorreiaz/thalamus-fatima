@@ -20,7 +20,7 @@ namespace ThalamusFAtiMA
                 clientName = args[1];
                 character = args[2];
             }
-            ThalamusConnector thalamusCS = new ThalamusConnector(clientName, character);
+            ThalamusConnector thalamusCS = new ThalamusConnector(clientName, Int32.Parse(robotId), character);
             FAtiMAConnector  fatima = new FAtiMAConnector(thalamusCS, robotId, character,"M",character,version);
             thalamusCS.FAtiMAConnector = fatima;
 

@@ -6,7 +6,7 @@ using EmoteCommonMessages;
 namespace ThalamusFAtiMA
 {
 
-    public interface IThalamusFAtiMAPublisher : IThalamusPublisher, ISuecaActions, IFMLSpeech, Thalamus.BML.IAnimationActions, Thalamus.BML.IPostureActions, EmoteCommonMessages.IGazeStateActions { }
+    public interface IThalamusFAtiMAPublisher : IThalamusPublisher, ISuecaActions, IRobotPerceptions, IFMLSpeech, Thalamus.BML.IAnimationActions, Thalamus.BML.IPostureActions, EmoteCommonMessages.IGazeStateActions { }
 
     public class ThalamusFAtiMAPublisher : IThalamusFAtiMAPublisher
     {
@@ -80,6 +80,16 @@ namespace ThalamusFAtiMA
         public void GlanceAtTarget(string targetName)
         {
             this._publisher.GlanceAtTarget(targetName);
+        }
+
+        public void StartedUtterance(int playerId, string category, string subcategory)
+        {
+            this._publisher.StartedUtterance(playerId, category, subcategory);
+        }
+
+        public void FinishedUtterance(int playerId)
+        {
+            this._publisher.StartedUtterance(playerId);
         }
     }
 }
