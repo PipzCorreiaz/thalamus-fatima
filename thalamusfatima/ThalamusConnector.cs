@@ -29,6 +29,7 @@ namespace ThalamusFAtiMA
 
         private bool otherRobotIsTalking;
         private int robotId;
+        private int currentPoints;
 
 
         public ThalamusConnector(string clientName, int robotId, string character = "")
@@ -49,6 +50,7 @@ namespace ThalamusFAtiMA
             Renounce = false;
             otherRobotIsTalking = false;
             this.robotId = robotId;
+            currentPoints = 0;
         } 
 
         public override void Dispose()
@@ -119,6 +121,7 @@ namespace ThalamusFAtiMA
                 param.Parameters.Add("0");
             }
             FAtiMAConnector.ActionSucceeded(param);
+            currentPoints = 0;
             GameActive = true;
         }
 
@@ -147,8 +150,8 @@ namespace ThalamusFAtiMA
                 {
                     if (talkingRobot == (robotId - 1))
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "QUAD_LOST");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "QUAD_LOST", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "QUAD_LOSS");
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "QUAD_LOSS", new string[] { }, new string[] { });
                     }   
                 }
                 else if (team1Score == 120)
@@ -163,8 +166,8 @@ namespace ThalamusFAtiMA
                 {
                     if (talkingRobot == (robotId - 1))
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "DOUBLE_LOST");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "DOUBLE_LOST", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "DOUBLE_LOSS");
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "DOUBLE_LOSS", new string[] { }, new string[] { });
                     }
                 }
                 else if (team1Score > 90)
@@ -179,8 +182,8 @@ namespace ThalamusFAtiMA
                 {
                     if (talkingRobot == (robotId - 1))
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "SINGLE_LOST");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "SINGLE_LOST", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "SINGLE_LOSS");
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "SINGLE_LOSS", new string[] { }, new string[] { });
                     }
                 }
                 else if (team1Score > 60)
@@ -200,6 +203,7 @@ namespace ThalamusFAtiMA
                     }
                 }
             }
+            currentPoints = 0;
         }
 
         public void ForwardSessionEnd(int team0Score, int team1Score, int talkingRobot)
@@ -221,8 +225,8 @@ namespace ThalamusFAtiMA
             {
                 if (talkingRobot == (robotId - 1))
                 {
-                    TypifiedPublisher.StartedUtterance(ID, "SessionEnd", "LOST");
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionEnd", "LOST", new string[] { }, new string[] { });
+                    TypifiedPublisher.StartedUtterance(ID, "SessionEnd", "LOSS");
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionEnd", "LOSS", new string[] { }, new string[] { });
                 }
             }
             else if (team1Score > team0Score)
@@ -521,71 +525,49 @@ namespace ThalamusFAtiMA
 
         public void ForwardTrickEnd(int winnerId, int trickPoints, int talkingRobot)
         {
-            string points;
+            string points = "", category = "TrickEnd", subcategory = "";
             TrickActive = false;
 
-            if (trickPoints == 0)
+            Thread.Sleep(1500);
+            if ((winnerId == ID || winnerId == (ID + 2) % 4) && currentPoints <= 60 && currentPoints + trickPoints > 60)
             {
-                points = "palha";
+                subcategory = "WIN";
+                currentPoints += trickPoints;
             }
             else
             {
-                points = trickPoints.ToString() + " pontos";
-            }
-
-            if (winnerId == ID)
-            {
-                if (random.Next(100) <= 100)
+                if (winnerId == ID || winnerId == (ID + 2) % 4)
                 {
-                    Thread.Sleep(1500);
-                    if (talkingRobot == (robotId - 1))
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrickEnd", "SELF");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "SELF", new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
-                    }
-                }
-            }
-            else if (winnerId == (ID + 2) % 4)
-            {
-
-                if (random.Next(100) <= 100)
-                {
-                    Thread.Sleep(1500);
-                    if (talkingRobot == (robotId - 1))
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrickEnd", "TEAM_PLAYER");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "TEAM_PLAYER", new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
-                    }
-                }
-            }
-            else
-            {
-                if (trickPoints == 0)
-                {
-
-                    if (random.Next(100) <= 100)
-                    {
-                        if (talkingRobot == (robotId - 1))
-                        {
-                            TypifiedPublisher.StartedUtterance(ID, "TrickEnd", "OPPONENT_ZERO");
-                            TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT_ZERO", new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
-                        }
-                    }
+                    subcategory = "OURS_";
+                    currentPoints += trickPoints;
+                    currentPoints += trickPoints;
                 }
                 else
                 {
+                    subcategory = "THEIRS_";
+                }
 
-                    if (random.Next(100) <= 100)
-                    {
-                        if (talkingRobot == (robotId - 1))
-                        {
-                            TypifiedPublisher.StartedUtterance(ID, "TrickEnd", "OPPONENT");
-                            TypifiedPublisher.PerformUtteranceFromLibrary("", "TrickEnd", "OPPONENT", new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
-                        }
-                    }
+                if (trickPoints == 0)
+                {
+                    subcategory += "ZERO";
+                    points = "palha";
+                }
+                else if (trickPoints < 10)
+                {
+                    subcategory += "LOW";
+                    points = trickPoints.ToString() + " pontos";
+                }
+                else
+                {
+                    subcategory += "HIGH";
+                    points = trickPoints.ToString() + " pontos";
                 }
             }
+
+            TypifiedPublisher.StartedUtterance(ID, category, subcategory);
+            TypifiedPublisher.PerformUtteranceFromLibrary("", category, subcategory, new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
         }
+
 
         void IFMLSpeechEvents.UtteranceFinished(string id)
         {
