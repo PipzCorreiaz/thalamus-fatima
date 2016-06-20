@@ -77,7 +77,7 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.Send("SUECA PLAY " + followingInfo + " " + rank + " " + suit + " " + card);
         }
 
-        void IIAActions.MoveExpectations(int playerId, string desirability, string desirabilityForOther, string successProbability, string failureProbability)
+        void IIAActions.MoveExpectations(int playerId, string desirability, string desirabilityForOther, string successProbability, string failureProbability, string additionalInfo)
         {
             //sTypifiedPublisher.GazeAtTarget("cardsZone");
 
@@ -89,10 +89,11 @@ namespace ThalamusFAtiMA
             param.Parameters.Add(desirabilityForOther);
             param.Parameters.Add(successProbability);
             param.Parameters.Add(failureProbability);
+            param.Parameters.Add(additionalInfo);
             FAtiMAConnector.ActionSucceeded(param);
         }
 
-        public void ForwardSessionStart(int numGames, int playerId, int talkingRobot)
+        public void ForwardSessionStart(int numGames, int playerId)
         {
             SessionActive = false;
             Renounce = false;
@@ -121,7 +122,7 @@ namespace ThalamusFAtiMA
             SessionActive = true;
         }
 
-        public void ForwardGameStart(int gameId, int playerId, int teamId, string trumpCard, int trumpCardPlayer, string[] cards, int talkingRobot)
+        public void ForwardGameStart(int gameId, int playerId, int teamId, string trumpCard, int trumpCardPlayer, string[] cards)
         {
             if (playerId != ID)
             {
@@ -150,7 +151,7 @@ namespace ThalamusFAtiMA
             GameActive = true;
         }
 
-        public void ForwardGameEnd(int team0Score, int team1Score, int talkingRobot)
+        public void ForwardGameEnd(int team0Score, int team1Score)
         {
             GameActive = false;
             PlayedGames++;
@@ -279,7 +280,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardSessionEnd(int team0Score, int team1Score, int talkingRobot)
+        public void ForwardSessionEnd(int team0Score, int team1Score)
         {
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
@@ -332,7 +333,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardShuffle(int playerId, int talkingRobot)
+        public void ForwardShuffle(int playerId)
         {
             while (!SessionActive)
             { }
@@ -381,7 +382,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardCut(int playerId, int talkingRobot)
+        public void ForwardCut(int playerId)
         {
             if (playerId == ID)
             {
@@ -425,7 +426,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardDeal(int playerId, int talkingRobot)
+        public void ForwardDeal(int playerId)
         {
             if (playerId == ID)
             {
@@ -463,7 +464,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardTrumpCard(string trumpCard, int playerId, int talkingRobot)
+        public void ForwardTrumpCard(string trumpCard, int playerId)
         {
             bool ace = false, seven = false, two = false;
             SuecaTypes.Card card = JsonSerializable.DeserializeFromJson<SuecaTypes.Card>(trumpCard);
@@ -606,7 +607,7 @@ namespace ThalamusFAtiMA
             } 
         }
 
-        public void ForwardReceiveRobotCards(int playerId, int talkingRobot)
+        public void ForwardReceiveRobotCards(int playerId)
         {
             //TypifiedPublisher.GazeAtTarget("cardPosition");
             TypifiedPublisher.GazeAtTarget("cardsZone");
@@ -635,7 +636,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardNextPlayer(int id, int talkingRobot)
+        public void ForwardNextPlayer(int id)
         {
             TrickActive = true;
 
@@ -663,7 +664,7 @@ namespace ThalamusFAtiMA
             
         }
 
-        public void ForwardTrickEnd(int winnerId, int trickPoints, int talkingRobot)
+        public void ForwardTrickEnd(int winnerId, int trickPoints)
         {
             string points = "", category = "TrickEnd", subcategory = "";
             TrickActive = false;
@@ -736,7 +737,7 @@ namespace ThalamusFAtiMA
         }
 
 
-        public void ForwardRenounce(int playerId, int talkingRobot)
+        public void ForwardRenounce(int playerId)
         {
             Renounce = true;
             if (playerId == ID)
@@ -771,7 +772,7 @@ namespace ThalamusFAtiMA
         }
 
 
-        public void ForwardResetTrick(int talkingRobot)
+        public void ForwardResetTrick()
         {
             string cat = "ResetTrick";
             string subCat = "AGREE";
