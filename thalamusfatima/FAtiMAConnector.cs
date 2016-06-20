@@ -322,6 +322,8 @@ namespace ThalamusFAtiMA
                             Console.WriteLine("PERFOMING A " + em.Type);
                             PlayExpressionWithUtterance(em);
                         }
+
+                        Console.WriteLine("Setting posture (again) to " + em.Type.ToLower() + " with intensity of " + em.Intensity + " caused by " + em.Cause);
                         ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
                     }
                     
@@ -385,7 +387,7 @@ namespace ThalamusFAtiMA
                             string cat = "NextPlayer";
                             string subCat = utteranceSubcategory;
                             ThalamusConnector.RequestUtterance(cat, subCat);
-                            while (ThalamusConnector.PendingRequest || ThalamusConnector.Retrying || ThalamusConnector.SomeoneIsTalking) { }
+                            ThalamusConnector.WaitForResponse();
                             if (ThalamusConnector.Talking)
                             {
                                 ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
@@ -482,12 +484,14 @@ namespace ThalamusFAtiMA
 
         private void PlayOnlyPosture(Emotion em)
         {
+            Console.WriteLine("Setting posture (only) to " + em.Type.ToLower() + " with intensity of " + em.Intensity + " caused by " + em.Cause);
             ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
         }
 
 
         private void PlayExpressionWithUtterance(Emotion em)
         {
+            Console.WriteLine("Setting posture to " + em.Type.ToLower() + " with intensity of " + em.Intensity + " caused by " + em.Cause);
             ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
 
             int intensity = (int)Math.Ceiling(em.Intensity / 2.0f);
@@ -500,10 +504,10 @@ namespace ThalamusFAtiMA
             //{
             //    subcategory += "_SELF";
             //}
-            if (playerId != ThalamusConnector.ID.ToString())
-            {
-                ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Play", subcategory, new string[] { "|intensity|, |playerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { intensity.ToString(), playerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
-            }
+            //if (playerId != ThalamusConnector.ID.ToString())
+            //{
+            //    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Play", subcategory, new string[] { "|intensity|, |playerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { intensity.ToString(), playerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+            //}
             
 
             //quando recebe as suas cartas

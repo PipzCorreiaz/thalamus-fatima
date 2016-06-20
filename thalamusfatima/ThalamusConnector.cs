@@ -37,6 +37,7 @@ namespace ThalamusFAtiMA
         private int requestCounter;
         public bool Retrying;
         private int currentPoints;
+        private int numRobots;
 
 
         public ThalamusConnector(string clientName, int robotId, string character = "")
@@ -48,6 +49,7 @@ namespace ThalamusFAtiMA
             PartnerID = 1; // default
             Opponent1ID = 0; //default
             Opponent2ID = 2; // default
+            numRobots = 1; // default
             random = new Random(Guid.NewGuid().GetHashCode());
             SetPublisher<IThalamusFAtiMAPublisher>();
             TypifiedPublisher = new ThalamusFAtiMAPublisher(Publisher);
@@ -91,12 +93,26 @@ namespace ThalamusFAtiMA
             param.Parameters.Add(failureProbability);
             param.Parameters.Add(additionalInfo);
             FAtiMAConnector.ActionSucceeded(param);
+
+            if (playerId != ID)
+            {
+                string cat = "Play";
+                string subCat = additionalInfo;
+                RequestUtterance(cat, subCat);
+                WaitForResponse();
+                if (Talking)
+                {
+                    TypifiedPublisher.StartedUtterance(-1, cat, subCat);
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
+                }
+            }
         }
 
-        public void ForwardSessionStart(int numGames, int playerId)
+        public void ForwardSessionStart(int numGames, int numRobots, int playerId)
         {
             SessionActive = false;
             Renounce = false;
+            this.numRobots = numRobots;
             ID = playerId;
             PartnerID = (ID + 2) % 4;
             Opponent1ID = (ID + 1) % 4;
@@ -116,8 +132,8 @@ namespace ThalamusFAtiMA
             WaitForResponse();
             if (Talking)
             {
-                TypifiedPublisher.StartedUtterance(-1, "SessionStart", "GREETING");
-                TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionStart", "GREETING", new string[] {}, new string[] {});
+                TypifiedPublisher.StartedUtterance(-1, cat, subCat);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
             }
             SessionActive = true;
         }
@@ -172,88 +188,89 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.ActionSucceeded(param);
             if (!Renounce && PlayedGames < NumGamesPerSession)
             {
+                string cat = "", subCat = "";
                 if (team0Score == 120)
                 {
-                    string cat = "GameEnd";
-                    string subCat = "QUAD_LOST";
+                    cat = "GameEnd";
+                    subCat = "QUAD_LOSS";
                     RequestUtterance(cat, subCat);
                     WaitForResponse();
                     if (Talking)
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "QUAD_LOSS");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "QUAD_LOSS", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }   
                 }
                 else if (team1Score == 120)
                 {
-                    string cat = "GameEnd";
-                    string subCat = "QUAD_WIN";
+                    cat = "GameEnd";
+                    subCat = "QUAD_WIN";
                     RequestUtterance(cat, subCat);
                     WaitForResponse();
                     if (Talking)
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "QUAD_WIN");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "QUAD_WIN", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
                 else if (team0Score > 90)
                 {
-                    string cat = "GameEnd";
-                    string subCat = "DOUBLE_LOST";
+                    cat = "GameEnd";
+                    subCat = "DOUBLE_LOSS";
                     RequestUtterance(cat, subCat);
                     WaitForResponse();
                     if (Talking)
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "DOUBLE_LOSS");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "DOUBLE_LOSS", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
                 else if (team1Score > 90)
                 {
-                    string cat = "GameEnd";
-                    string subCat = "DOUBLE_WIN";
+                    cat = "GameEnd";
+                    subCat = "DOUBLE_WIN";
                     RequestUtterance(cat, subCat);
                     WaitForResponse();
                     if (Talking)
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "DOUBLE_WIN");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "DOUBLE_WIN", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
                 else if (team0Score > 60)
                 {
-                    string cat = "GameEnd";
-                    string subCat = "SINGLE_LOST";
+                    cat = "GameEnd";
+                    subCat = "SINGLE_LOSS";
                     RequestUtterance(cat, subCat);
                     WaitForResponse();
                     if (Talking)
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "SINGLE_LOSS");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "SINGLE_LOSS", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
                 else if (team1Score > 60)
                 {
-                    string cat = "GameEnd";
-                    string subCat = "SINGLE_WIN";
+                    cat = "GameEnd";
+                    subCat = "SINGLE_WIN";
                     RequestUtterance(cat, subCat);
                     WaitForResponse();
                     if (Talking)
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "SINGLE_WIN");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "SINGLE_WIN", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
                 else
                 {
-                    string cat = "GameEnd";
-                    string subCat = "DRAW";
+                    cat = "GameEnd";
+                    subCat = "DRAW";
                     RequestUtterance(cat, subCat);
                     WaitForResponse();
                     if (Talking)
                     {
-                        TypifiedPublisher.StartedUtterance(ID, "GameEnd", "DRAW");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "DRAW", new string[] { }, new string[] { });
+                        TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                        TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
             }
@@ -285,51 +302,35 @@ namespace ThalamusFAtiMA
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
             param.ActionType = "SessionEnd";
+            string cat = "", subCat = "";
+
             if (team0Score > team1Score)
             {
                 param.Target = "0";
+                cat = "SessionEnd";
+                subCat = "LOSS";
+            }
+            else if (team1Score > team0Score)
+            {
+                param.Target = "1";
+                cat = "SessionEnd";
+                subCat = "WIN";
             }
             else
             {
                 param.Target = "1";
+                cat = "SessionEnd";
+                subCat = "DRAW";
             }
+
             FAtiMAConnector.ActionSucceeded(param);
-            
-            if (team0Score > team1Score)
+
+            RequestUtterance(cat, subCat);
+            WaitForResponse();
+            if (Talking)
             {
-                string cat = "SessionEnd";
-                string subCat = "LOST";
-                RequestUtterance(cat, subCat);
-                WaitForResponse();
-                if (Talking)
-                {
-                    TypifiedPublisher.StartedUtterance(ID, "SessionEnd", "LOSS");
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionEnd", "LOSS", new string[] { }, new string[] { });
-                }
-            }
-            else if (team1Score > team0Score)
-            {
-                string cat = "SessionEnd";
-                string subCat = "WIN";
-                RequestUtterance(cat, subCat);
-                WaitForResponse();
-                if (Talking)
-                {
-                    TypifiedPublisher.StartedUtterance(ID, "SessionEnd", "WIN");
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionEnd", "WIN", new string[] { }, new string[] { });
-                }
-            }
-            else
-            {
-                string cat = "SessionEnd";
-                string subCat = "DRAW";
-                RequestUtterance(cat, subCat);
-                WaitForResponse();
-                if (Talking)
-                {
-                    TypifiedPublisher.StartedUtterance(ID, "SessionEnd", "DRAW");
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "SessionEnd", "DRAW", new string[] { }, new string[] { });
-                }
+                TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
             }
         }
 
@@ -340,127 +341,95 @@ namespace ThalamusFAtiMA
 
             if (PlayedGames != 0)
             {
+                string cat = "", subCat = "";
+                int playerId1 = (ID + 2) % 4; //team player
+                int playerId2 = random.Next(0, 4);
+                while (playerId2 == ID && playerId2 == playerId1) //choose someone besides me and my partner
+                {
+                    playerId1 = random.Next(0, 4);
+                }
+
                 if (playerId == ID)
                 {
-                    int playerId1 = (ID + 2) % 4; //team player
                     TypifiedPublisher.GazeAtTarget("player" + playerId1);
-                    if (random.Next(100) <= 100)
-                    {
-                        int playerId2 = random.Next(0, 4);
-                        while (playerId2 == ID && playerId2 == playerId1) //choose someone besides me and my partner
-                        {
-                            playerId1 = random.Next(0, 4);
-                        }
-                        string cat = "Shuffle";
-                        string subCat = "SELF";
-                        RequestUtterance(cat, subCat);
-                        WaitForResponse();
-                        if (Talking)
-                        {
-                            TypifiedPublisher.StartedUtterance(ID, "Shuffle", "SELF");
-                            TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
-                        }
-                    }
+                    cat = "Shuffle";
+                    subCat = "SELF";
                 }
                 else
                 {
                     TypifiedPublisher.GazeAtTarget("player" + playerId);
-                    if (random.Next(100) <= 100)
-                    {
-                        int playerId1 = playerId;
-                        string cat = "Shuffle";
-                        string subCat = "OTHER";
-                        RequestUtterance(cat, subCat);
-                        WaitForResponse();
-                        if (Talking)
-                        {
-                            TypifiedPublisher.StartedUtterance(ID, "Shuffle", "OTHER");
-                            TypifiedPublisher.PerformUtteranceFromLibrary("", "Shuffle", "OTHER", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
-                        }
-                    }
-                }    
+                    cat = "Shuffle";
+                    subCat = "OTHER";
+                }
+
+                RequestUtterance(cat, subCat);
+                WaitForResponse();
+                if (Talking)
+                {
+                    TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
+                }   
             }
         }
 
         public void ForwardCut(int playerId)
         {
+            string cat = "", subCat = "";
+            int playerId1 = (ID + 2) % 4; //team player
+            int playerId2 = random.Next(0, 4);
+            while (playerId2 == ID && playerId2 == playerId1) //choose someone besides me and my partner
+            {
+                playerId1 = random.Next(0, 4);
+            }
+
             if (playerId == ID)
             {
-                int playerId1 = (ID + 2) % 4; //team player
                 TypifiedPublisher.GazeAtTarget("player" + playerId1);
-                if (random.Next(100) <= 100)
-                {
-                    
-                    int playerId2 = random.Next(0, 4);
-                    while (playerId2 == ID && playerId2 == playerId1) //choose someone besides me and my partner
-                    {
-                        playerId1 = random.Next(0, 4);
-                    }
-                    string cat = "Cut";
-                    string subCat = "SELF";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "Cut", "SELF");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
-                    }
-                }
+    
+                cat = "Cut";
+                subCat = "SELF";
             }
             else
             {
                 TypifiedPublisher.GazeAtTarget("player" + playerId);
-                if (random.Next(100) <= 100)
-                {
-                    int playerId1 = playerId;
-                    string cat = "Cut";
-                    string subCat = "OTHER";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "Cut", "OTHER");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "Cut", "OTHER", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
-                    }
-                }
+                cat = "Cut";
+                subCat = "OTHER";
+            }
+
+            RequestUtterance(cat, subCat);
+            WaitForResponse();
+            if (Talking)
+            {
+                TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
             }
         }
 
         public void ForwardDeal(int playerId)
         {
+            string cat = "", subCat = "";
+            int playerId1 = (ID + 2) % 4; //team player
+            int playerId2 = (ID + 2) % 4; //team player
+
             if (playerId == ID)
             {
-                int playerId1 = (ID + 2) % 4; //team player
                 TypifiedPublisher.GazeAtTarget("player" + playerId1);
-                if (random.Next(100) <= 100)
-                {
-                    string cat = "Deal";
-                    string subCat = "SELF";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "Deal", "SELF");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "SELF", new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
-                    }
-                }
+                cat = "Deal";
+                subCat = "SELF";
             }
             else
             {
                 TypifiedPublisher.GazeAtTarget("player" + playerId);
-                if (random.Next(100) <= 100)
-                {
-                    int playerId2 = (ID + 2) % 4; //team player
-                    string cat = "Deal";
-                    string subCat = "OTHER";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "Deal", "OTHER");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "Deal", "OTHER", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId.ToString(), playerId2.ToString() });
-                    }
-                }
+                cat = "Deal";
+                subCat = "OTHER";
+            }
+
+            RequestUtterance(cat, subCat);
+            WaitForResponse();
+            if (Talking)
+            {
+                TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
             }
         }
 
@@ -486,83 +455,42 @@ namespace ThalamusFAtiMA
             int opponent2Id = (ID + 3) % 4;
 
             TypifiedPublisher.GazeAtTarget("player" + playerId);
+            string cat = "", subCat = "";
 
             if (playerId == ID)
             {
                 if (ace)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "SELF_ACE";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "SELF_ACE");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "SELF_ACE";
                 }
                 else if (seven)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "SELF_SEVEN";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "SELF_SEVEN");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_SEVEN", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "SELF_SEVEN";
                 }
                 else if (two)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "SELF_TWO";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "SELF_TWO");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_TWO", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "SELF_TWO";
                 }
             }
             else if (playerId == partnerId)
             {
                 if (ace)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "PARTNER_ACE";
-                    RequestUtterance(cat, subCat); WaitForResponse();
-
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "PARTNER_ACE");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "PARTNER_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "PARTNER_ACE";
                 }
                 else if (seven)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "PARTNER_SEVEN";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "PARTNER_SEVEN");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "PARTNER_SEVEN", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "PARTNER_SEVEN";
                 }
                 else if (two)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "PARTNER_TWO";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "PARTNER_TWO");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "PARTNER_TWO", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "PARTNER_TWO";
                 }
 
             }
@@ -570,41 +498,28 @@ namespace ThalamusFAtiMA
             {
                 if (ace)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "OPPONENT_ACE";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "OPPONENT_ACE");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "OPPONENT_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "OPPONENT_ACE";
                 }
                 else if (seven)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "OPPONENT_SEVEN";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "OPPONENT_SEVEN");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "OPPONENT_SEVEN", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "OPPONENT_SEVEN";
                 }
                 else if (two)
                 {
-                    string cat = "TrumpCard";
-                    string subCat = "OPPONENT_TWO";
-                    RequestUtterance(cat, subCat);
-                    WaitForResponse();
-                    if (Talking)
-                    {
-                        TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "OPPONENT_TWO");
-                        TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "OPPONENT_TWO", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
-                    }
+                    cat = "TrumpCard";
+                    subCat = "OPPONENT_TWO";
                 }
-            } 
+            }
+
+            RequestUtterance(cat, subCat);
+            WaitForResponse();
+            if (Talking)
+            {
+                TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "SELF_ACE");
+                TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+            }
         }
 
         public void ForwardReceiveRobotCards(int playerId)
@@ -630,8 +545,8 @@ namespace ThalamusFAtiMA
                 WaitForResponse();
                 if (Talking)
                 {
-                    TypifiedPublisher.StartedUtterance(ID, "ReceiveCards", "SELF");
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "ReceiveCards", "SELF", new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
+                    TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
                 }
             }
         }
@@ -740,6 +655,8 @@ namespace ThalamusFAtiMA
         public void ForwardRenounce(int playerId)
         {
             Renounce = true;
+            string cat = "", subCat = "";
+
             if (playerId == ID)
             {
                 Console.WriteLine("Bot has just renounced!!!  WHAT?!");
@@ -747,27 +664,21 @@ namespace ThalamusFAtiMA
             }
             else if (playerId == (ID + 2) % 4)
             {
-                string cat = "GameEnd";
-                string subCat = "TEAM_CHEAT";
-                RequestUtterance(cat, subCat);
-                WaitForResponse();
-                if (Talking)
-                {
-                    TypifiedPublisher.StartedUtterance(ID, "GameEnd", "TEAM_CHEAT");
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "TEAM_CHEAT", new string[] { "|playerId|" }, new string[] { playerId.ToString() });
-                }
+                cat = "GameEnd";
+                subCat = "TEAM_CHEAT";
             }
             else
             {
-                string cat = "GameEnd";
-                string subCat = "OTHER_CHEAT";
-                RequestUtterance(cat, subCat);
-                WaitForResponse();
-                if (Talking)
-                {
-                    TypifiedPublisher.StartedUtterance(ID, "GameEnd", "OTHER_CHEAT");
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "OTHER_CHEAT", new string[] { "|playerId|" }, new string[] { playerId.ToString() });
-                }
+                cat = "GameEnd";
+                subCat = "OTHER_CHEAT";
+            }
+
+            RequestUtterance(cat, subCat);
+            WaitForResponse();
+            if (Talking)
+            {
+                TypifiedPublisher.StartedUtterance(ID, "GameEnd", "TEAM_CHEAT");
+                TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "TEAM_CHEAT", new string[] { "|playerId|" }, new string[] { playerId.ToString() });
             }
         }
 
@@ -780,8 +691,8 @@ namespace ThalamusFAtiMA
             WaitForResponse();
             if (Talking)
             {
-                TypifiedPublisher.StartedUtterance(ID, "ResetTrick", "AGREE");
-                TypifiedPublisher.PerformUtteranceFromLibrary("", "ResetTrick", "AGREE", new string[] { }, new string[] { });
+                TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
             }
         }
 
@@ -855,11 +766,18 @@ namespace ThalamusFAtiMA
 
         public void RequestUtterance(string category, string subcategory)
         {
-            PendingRequest = true;
-            pendingCategory = category;
-            pendingSubcategory = subcategory;
-            requestCounter++;
-            TypifiedPublisher.RequestUtterance(ID, category, subcategory);
+            if (numRobots > 1)
+            {
+                PendingRequest = true;
+                pendingCategory = category;
+                pendingSubcategory = subcategory;
+                requestCounter++;
+                TypifiedPublisher.RequestUtterance(ID, category, subcategory);
+            }
+            else
+            {
+                Talking = true;
+            }
 
         }
 
