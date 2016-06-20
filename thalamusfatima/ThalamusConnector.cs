@@ -114,6 +114,7 @@ namespace ThalamusFAtiMA
             Renounce = false;
             this.numRobots = numRobots;
             ID = playerId;
+            Console.WriteLine("Setting ID to " + playerId + " at sessionStart");
             PartnerID = (ID + 2) % 4;
             Opponent1ID = (ID + 1) % 4;
             Opponent2ID = (ID + 3) % 4;
@@ -145,6 +146,7 @@ namespace ThalamusFAtiMA
                 Console.WriteLine("LOOOOOOOOOOL");
             }
             ID = playerId;
+            Console.WriteLine("Setting ID to " + playerId + " at gameStart");
             PartnerID = (ID + 2) % 4;
             Opponent1ID = (ID + 1) % 4;
             Opponent2ID = (ID + 3) % 4;
