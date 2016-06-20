@@ -360,7 +360,15 @@ namespace ThalamusFAtiMA
 
 
                     //ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
-                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+                    string cat = "Playing";
+                    string subCat = followingInfo;
+                    ThalamusConnector.RequestUtterance(cat, subCat);
+                    ThalamusConnector.WaitForResponse();
+                    if (ThalamusConnector.Talking)
+                    {
+                        ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+
+                    }
                     ThalamusConnector.TypifiedPublisher.Play(ThalamusConnector.ID, correctJson);
                     
                     this.ActionSucceeded(parameters);
@@ -374,8 +382,15 @@ namespace ThalamusFAtiMA
 
                         if (ThalamusConnector.random.Next(100) <= 100)
                         {
-                            ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
-                            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+                            string cat = "NextPlayer";
+                            string subCat = utteranceSubcategory;
+                            ThalamusConnector.RequestUtterance(cat, subCat);
+                            while (ThalamusConnector.PendingRequest || ThalamusConnector.Retrying || ThalamusConnector.SomeoneIsTalking) { }
+                            if (ThalamusConnector.Talking)
+                            {
+                                ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
+                                ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+                            }
                         }
                         else
                         {

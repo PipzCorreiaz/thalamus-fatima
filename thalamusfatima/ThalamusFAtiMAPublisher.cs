@@ -82,6 +82,21 @@ namespace ThalamusFAtiMA
             this._publisher.GlanceAtTarget(targetName);
         }
 
+        public void RequestUtterance(int playerId, string category, string subcategory)
+        {
+            this._publisher.RequestUtterance(playerId, category, subcategory);
+        }
+
+        public void OKUtterance(int playerId)
+        {
+            this._publisher.OKUtterance(playerId);
+        }
+
+        public void NOUtterance(int playerId)
+        {
+            this._publisher.NOUtterance(playerId);
+        }
+
         public void StartedUtterance(int playerId, string category, string subcategory)
         {
             this._publisher.StartedUtterance(playerId, category, subcategory);
@@ -89,7 +104,7 @@ namespace ThalamusFAtiMA
 
         public void FinishedUtterance(int playerId)
         {
-            this._publisher.StartedUtterance(playerId);
+            this._publisher.FinishedUtterance(playerId);
         }
     }
 }
