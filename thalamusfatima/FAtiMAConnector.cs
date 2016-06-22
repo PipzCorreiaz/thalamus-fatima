@@ -78,6 +78,7 @@ namespace ThalamusFAtiMA
         public const string SHUTDOWN_MESSAGE = "SHUTDOWN";
 
 
+
         //communication/socket fields
         private Socket socket;
         private Socket serverSocket;
@@ -105,6 +106,7 @@ namespace ThalamusFAtiMA
 
         private EmotionalState _emotionalState;
         private string _previousEmotion = "";
+        private Random random;
 
         public SpeechActParameters CurrentSpeechAct { get; set; }
 
@@ -149,6 +151,7 @@ namespace ThalamusFAtiMA
             this.Role = role;
             this.Name = name;
             this._emotionalState = new EmotionalState();
+            this.random = new Random(Guid.NewGuid().GetHashCode());
 			// Henrique Campos - emotional state property
 
             this.PredefinedUtteranceSelector = new PredefinedUtteranceSelector(version);
@@ -325,6 +328,8 @@ namespace ThalamusFAtiMA
 
                         Console.WriteLine("Setting posture (again) to " + em.Type.ToLower() + " with intensity of " + em.Intensity + " caused by " + em.Cause);
                         ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
+                        Thread thread = new Thread(BackToNeutralPosture);
+                        thread.Start();
                     }
                     
                    
@@ -379,24 +384,26 @@ namespace ThalamusFAtiMA
                 {
                     string utteranceSubcategory = parameters.Target;
                     string nextPlayerId = parameters.Parameters[0];
-                    if (utteranceSubcategory != "EMYS" && ThalamusConnector.GameActive)
+                    Console.WriteLine("Received a nextplayerACT for player id " + nextPlayerId);
+                    if (ThalamusConnector.GameActive)
                     {
-
-                        if (ThalamusConnector.random.Next(100) <= 100)
-                        {
-                            string cat = "NextPlayer";
-                            string subCat = utteranceSubcategory;
-                            ThalamusConnector.RequestUtterance(cat, subCat);
-                            ThalamusConnector.WaitForResponse();
-                            if (ThalamusConnector.Talking)
-                            {
-                                ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
-                                ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
-                            }
-                        }
+                        string cat = "NextPlayer";
+                        string subCat;
+                        if (utteranceSubcategory == "EMYS")
+	                    {
+		                    subCat = "SELF";
+	                    }
                         else
                         {
-                            ThalamusConnector.TypifiedPublisher.GazeAtTarget("player" + nextPlayerId);
+                            subCat = utteranceSubcategory;
+                        
+                        }
+                        ThalamusConnector.RequestUtterance(cat, subCat);
+                        ThalamusConnector.WaitForResponse();
+                        if (ThalamusConnector.Talking)
+                        {
+                            ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
+                            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
                         }
                         this.ActionSucceeded(parameters);
                     }
@@ -486,6 +493,8 @@ namespace ThalamusFAtiMA
         {
             Console.WriteLine("Setting posture (only) to " + em.Type.ToLower() + " with intensity of " + em.Intensity + " caused by " + em.Cause);
             ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
+            Thread thread = new Thread(BackToNeutralPosture);
+            thread.Start();
         }
 
 
@@ -493,6 +502,8 @@ namespace ThalamusFAtiMA
         {
             Console.WriteLine("Setting posture to " + em.Type.ToLower() + " with intensity of " + em.Intensity + " caused by " + em.Cause);
             ThalamusConnector.TypifiedPublisher.SetPosture("", em.Type.ToLower());
+            Thread thread = new Thread(BackToNeutralPosture);
+            thread.Start();
 
             int intensity = (int)Math.Ceiling(em.Intensity / 2.0f);
             
@@ -514,6 +525,12 @@ namespace ThalamusFAtiMA
             //ThalamusConnector.TypifiedPublisher.PlayAnimation("", "ownCardsAnalysis");
             //quando joga ou outro joga
             //ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardPosition");
+        }
+
+        private void BackToNeutralPosture()
+        {
+            Thread.Sleep(random.Next(6000));
+            ThalamusConnector.TypifiedPublisher.SetPosture("", "neutral");
         }
 
         private string GetExpressionText(Emotion em)

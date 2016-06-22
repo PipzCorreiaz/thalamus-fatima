@@ -577,7 +577,6 @@ namespace ThalamusFAtiMA
                 param.Target = "OPPONENT";
             }
             FAtiMAConnector.ActionSucceeded(param);
-            //TypifiedPublisher.GlanceAtTarget("cards3");
             
         }
 
