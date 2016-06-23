@@ -365,16 +365,18 @@ namespace ThalamusFAtiMA
                     string rank = parameters.Parameters[1];
                     string suit = parameters.Parameters[2];
 
-
                     //ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
-                    string cat = "Playing";
-                    string subCat = followingInfo;
-                    ThalamusConnector.RequestUtterance(cat, subCat);
-                    ThalamusConnector.WaitForResponse();
-                    if (ThalamusConnector.Talking)
+                    if (random.Next(100) <= 60)
                     {
-                        ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+                        string cat = "Playing";
+                        string subCat = followingInfo;
+                        ThalamusConnector.RequestUtterance(cat, subCat);
+                        ThalamusConnector.WaitForResponse();
+                        if (ThalamusConnector.Talking)
+                        {
+                            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
 
+                        }
                     }
                     ThalamusConnector.TypifiedPublisher.Play(ThalamusConnector.ID, correctJson);
                     
@@ -387,23 +389,26 @@ namespace ThalamusFAtiMA
                     Console.WriteLine("Received a nextplayerACT for player id " + nextPlayerId);
                     if (ThalamusConnector.GameActive)
                     {
-                        string cat = "NextPlayer";
-                        string subCat;
-                        if (utteranceSubcategory == "EMYS")
-	                    {
-		                    subCat = "SELF";
-	                    }
-                        else
+                        if (random.Next(100) <= 60)
                         {
-                            subCat = utteranceSubcategory;
-                        
-                        }
-                        ThalamusConnector.RequestUtterance(cat, subCat);
-                        ThalamusConnector.WaitForResponse();
-                        if (ThalamusConnector.Talking)
-                        {
-                            ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
-                            ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+                            string cat = "NextPlayer";
+                            string subCat;
+                            if (utteranceSubcategory == "EMYS")
+                            {
+                                subCat = "SELF";
+                            }
+                            else
+                            {
+                                subCat = utteranceSubcategory;
+
+                            }
+                            ThalamusConnector.RequestUtterance(cat, subCat);
+                            ThalamusConnector.WaitForResponse();
+                            if (ThalamusConnector.Talking)
+                            {
+                                ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
+                                ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "NextPlayer", utteranceSubcategory, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId, ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+                            }
                         }
                         this.ActionSucceeded(parameters);
                     }

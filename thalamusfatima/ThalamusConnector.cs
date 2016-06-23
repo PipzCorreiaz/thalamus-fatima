@@ -94,7 +94,7 @@ namespace ThalamusFAtiMA
             param.Parameters.Add(additionalInfo);
             FAtiMAConnector.ActionSucceeded(param);
 
-            if (playerId != ID)
+            if (playerId != ID && random.Next(100) <= 60)
             {
                 string cat = "Play";
                 string subCat = additionalInfo;
@@ -621,8 +621,11 @@ namespace ThalamusFAtiMA
                 }
             }
 
-            TypifiedPublisher.StartedUtterance(ID, category, subcategory);
-            TypifiedPublisher.PerformUtteranceFromLibrary("", category, subcategory, new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
+            if (random.Next(100) <= 60)
+            {
+                TypifiedPublisher.StartedUtterance(ID, category, subcategory);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", category, subcategory, new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
+            }
         }
 
 
@@ -678,8 +681,8 @@ namespace ThalamusFAtiMA
             WaitForResponse();
             if (Talking)
             {
-                TypifiedPublisher.StartedUtterance(ID, "GameEnd", "TEAM_CHEAT");
-                TypifiedPublisher.PerformUtteranceFromLibrary("", "GameEnd", "TEAM_CHEAT", new string[] { "|playerId|" }, new string[] { playerId.ToString() });
+                TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId|" }, new string[] { playerId.ToString() });
             }
         }
 
