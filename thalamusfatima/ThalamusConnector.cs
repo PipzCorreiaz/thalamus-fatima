@@ -38,6 +38,7 @@ namespace ThalamusFAtiMA
         public bool Retrying;
         private int currentPoints;
         private int numRobots;
+        private int nextPlayerId;
 
 
         public ThalamusConnector(string clientName, int robotId, string character = "")
@@ -98,12 +99,13 @@ namespace ThalamusFAtiMA
             {
                 string cat = "Play";
                 string subCat = additionalInfo;
+                int intensity = 3;
                 RequestUtterance(cat, subCat);
                 WaitForResponse();
                 if (Talking)
                 {
                     TypifiedPublisher.StartedUtterance(-1, cat, subCat);
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|intensity|", "|playerId|", "|partnerId|", "|opponentId1|", "|opponentId2|", "|nextPlayerId|" }, new string[] { intensity.ToString(), playerId.ToString(), PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString(), nextPlayerId.ToString() });
                 }
             }
         }
@@ -369,7 +371,7 @@ namespace ThalamusFAtiMA
                 if (Talking)
                 {
                     TypifiedPublisher.StartedUtterance(ID, cat, subCat);
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId|", "|partnerId|", "|opponentId1|", "|opponentId2|", "|nextPlayerId|", "|playerId1|", "|playerId2|" }, new string[] { playerId.ToString(), PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString(), nextPlayerId.ToString(), playerId1.ToString(), playerId2.ToString() });
                 }   
             }
         }
@@ -403,7 +405,7 @@ namespace ThalamusFAtiMA
             if (Talking)
             {
                 TypifiedPublisher.StartedUtterance(ID, cat, subCat);
-                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId|", "|partnerId|", "|opponentId1|", "|opponentId2|", "|nextPlayerId|", "|playerId1|", "|playerId2|" }, new string[] { playerId.ToString(), PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString(), nextPlayerId.ToString(), playerId1.ToString(), playerId2.ToString() });
             }
         }
 
@@ -431,7 +433,7 @@ namespace ThalamusFAtiMA
             if (Talking)
             {
                 TypifiedPublisher.StartedUtterance(ID, cat, subCat);
-                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|" }, new string[] { playerId1.ToString() });
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId|", "|partnerId|", "|opponentId1|", "|opponentId2|", "|nextPlayerId|" }, new string[] { playerId.ToString(), PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString(), nextPlayerId.ToString() });
             }
         }
 
@@ -548,7 +550,7 @@ namespace ThalamusFAtiMA
                 if (Talking)
                 {
                     TypifiedPublisher.StartedUtterance(ID, cat, subCat);
-                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId1|", "|playerId2|" }, new string[] { playerId1.ToString(), playerId2.ToString() });
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId|", "|partnerId|", "|opponentId1|", "|opponentId2|", "|nextPlayerId|", "|playerId1|", "|playerId2|" }, new string[] { playerId.ToString(), PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString(), nextPlayerId.ToString(), playerId1.ToString(), playerId2.ToString() });
                 }
             }
         }
@@ -556,7 +558,7 @@ namespace ThalamusFAtiMA
         public void ForwardNextPlayer(int id)
         {
             TrickActive = true;
-
+            nextPlayerId = id;
             ActionParameters param = new ActionParameters();
             param.Subject = "User" + id;
             param.ActionType = "NextPlayer";
