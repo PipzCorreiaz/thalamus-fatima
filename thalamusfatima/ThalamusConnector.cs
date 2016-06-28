@@ -579,7 +579,6 @@ namespace ThalamusFAtiMA
                 param.Target = "OPPONENT";
             }
             FAtiMAConnector.ActionSucceeded(param);
-            
         }
 
         public void ForwardTrickEnd(int winnerId, int trickPoints)
