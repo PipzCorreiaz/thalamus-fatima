@@ -583,49 +583,56 @@ namespace ThalamusFAtiMA
 
         public void ForwardTrickEnd(int winnerId, int trickPoints)
         {
-            string points = "", category = "TrickEnd", subcategory = "";
-            TrickActive = false;
-
-            Thread.Sleep(1500);
-            if ((winnerId == ID || winnerId == (ID + 2) % 4) && currentPoints <= 60 && currentPoints + trickPoints > 60)
-            {
-                subcategory = "WIN";
-                currentPoints += trickPoints;
-            }
-            else
-            {
-                if (winnerId == ID || winnerId == (ID + 2) % 4)
-                {
-                    subcategory = "OURS_";
-                    currentPoints += trickPoints;
-                    currentPoints += trickPoints;
-                }
-                else
-                {
-                    subcategory = "THEIRS_";
-                }
-
-                if (trickPoints == 0)
-                {
-                    subcategory += "ZERO";
-                    points = "palha";
-                }
-                else if (trickPoints < 10)
-                {
-                    subcategory += "LOW";
-                    points = trickPoints.ToString() + " pontos";
-                }
-                else
-                {
-                    subcategory += "HIGH";
-                    points = trickPoints.ToString() + " pontos";
-                }
-            }
-
             if (random.Next(100) <= 60)
             {
-                TypifiedPublisher.StartedUtterance(ID, category, subcategory);
-                TypifiedPublisher.PerformUtteranceFromLibrary("", category, subcategory, new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
+                string points = "", cat = "TrickEnd", subCat = "";
+                TrickActive = false;
+
+
+                Thread.Sleep(1500);
+                if ((winnerId == ID || winnerId == (ID + 2) % 4) && currentPoints <= 60 && currentPoints + trickPoints > 60)
+                {
+                    subCat = "WIN";
+                    currentPoints += trickPoints;
+                }
+                else
+                {
+                    if (winnerId == ID || winnerId == (ID + 2) % 4)
+                    {
+                        subCat = "OURS_";
+                        currentPoints += trickPoints;
+                        currentPoints += trickPoints;
+                    }
+                    else
+                    {
+                        subCat = "THEIRS_";
+                    }
+
+                    if (trickPoints == 0)
+                    {
+                        subCat += "ZERO";
+                        points = "palha";
+                    }
+                    else if (trickPoints < 10)
+                    {
+                        subCat += "LOW";
+                        points = trickPoints.ToString() + " pontos";
+                    }
+                    else
+                    {
+                        subCat += "HIGH";
+                        points = trickPoints.ToString() + " pontos";
+                    }
+                }
+
+
+                RequestUtterance(cat, subCat);
+                WaitForResponse();
+                if (Talking)
+                {
+                    TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|playerId|", "|trickPoints|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { winnerId.ToString(), points, PartnerID.ToString(), Opponent1ID.ToString(), Opponent2ID.ToString() });
+                }
             }
         }
 
