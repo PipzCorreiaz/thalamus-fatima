@@ -110,7 +110,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardSessionStart(int numGames, int numRobots, int playerId)
+        public void ForwardSessionStart(int sessionId, int numGames, int numRobots, int playerId)
         {
             SessionActive = false;
             Renounce = false;
@@ -130,7 +130,7 @@ namespace ThalamusFAtiMA
             FAtiMAConnector.ActionSucceeded(param);
 
             string cat = "SessionStart";
-            string subCat = "GREETING";
+            string subCat = "SESSION_" + sessionId;
             RequestUtterance(cat, subCat);
             WaitForResponse();
             if (Talking)
@@ -301,30 +301,30 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardSessionEnd(int team0Score, int team1Score)
+        public void ForwardSessionEnd(int sessionId, int team0Score, int team1Score)
         {
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
             param.ActionType = "SessionEnd";
-            string cat = "", subCat = "";
+            string cat = "", subCat = "SESSION_" + sessionId;
 
             if (team0Score > team1Score)
             {
                 param.Target = "0";
                 cat = "SessionEnd";
-                subCat = "LOSS";
+                subCat += "_LOSS";
             }
             else if (team1Score > team0Score)
             {
                 param.Target = "1";
                 cat = "SessionEnd";
-                subCat = "WIN";
+                subCat += "_WIN";
             }
             else
             {
                 param.Target = "1";
                 cat = "SessionEnd";
-                subCat = "DRAW";
+                subCat += "_DRAW";
             }
 
             FAtiMAConnector.ActionSucceeded(param);
