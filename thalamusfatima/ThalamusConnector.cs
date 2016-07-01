@@ -521,8 +521,8 @@ namespace ThalamusFAtiMA
             WaitForResponse();
             if (Talking)
             {
-                TypifiedPublisher.StartedUtterance(ID, "TrumpCard", "SELF_ACE");
-                TypifiedPublisher.PerformUtteranceFromLibrary("", "TrumpCard", "SELF_ACE", new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
+                TypifiedPublisher.StartedUtterance(ID, cat, subCat);
+                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|partnerID|", "|opponent1Id|", "|opponent2Id|" }, new string[] { partnerId.ToString(), opponent1Id.ToString(), opponent2Id.ToString() });
             }
         }
 

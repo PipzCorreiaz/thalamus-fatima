@@ -374,6 +374,7 @@ namespace ThalamusFAtiMA
                         ThalamusConnector.WaitForResponse();
                         if (ThalamusConnector.Talking)
                         {
+                            ThalamusConnector.TypifiedPublisher.StartedUtterance(ThalamusConnector.ID, cat, subCat);
                             ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", "Playing", followingInfo, new string[] { "|rank|", "|suit|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { convertRankToPortuguese(rank), convertSuitToPortuguese(suit), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
 
                         }
@@ -409,6 +410,7 @@ namespace ThalamusFAtiMA
                             if (ThalamusConnector.Talking)
                             {
                                 ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
+                                ThalamusConnector.TypifiedPublisher.StartedUtterance(ThalamusConnector.ID, cat, subCat);
                                 ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId.ToString(), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
                             }
                         }
