@@ -41,6 +41,7 @@ using ThalamusFAtiMA.Speech;
 using ThalamusFAtiMA.Speech.AMSummary;
 using ThalamusFAtiMA.Utils;
 using System.Xml;
+using System.Collections.Generic;
 
 namespace ThalamusFAtiMA
 {
@@ -366,7 +367,9 @@ namespace ThalamusFAtiMA
                     string suit = parameters.Parameters[2];
 
                     //ThalamusConnector.TypifiedPublisher.GazeAtTarget("cardsZone");
-                    if (random.Next(100) <= 60)
+                    List<string> possibleSubCats = new List<string>(new string[] { "FOLLOWING", "NEW_TRICK", "OURS_OURS_HIGH", "THEIRS_OURS_HIGH", "THEIRS_OURS_LOW", "THEIRS_THEIRS_HIGH" });
+
+                    if (random.Next(100) <= 60 && possibleSubCats.Contains(followingInfo))
                     {
                         string cat = "Playing";
                         string subCat = followingInfo;

@@ -8,6 +8,7 @@ using ThalamusFAtiMA.Utils;
 using EmoteCommonMessages;
 using System.Threading;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 
 namespace ThalamusFAtiMA
@@ -95,7 +96,9 @@ namespace ThalamusFAtiMA
             param.Parameters.Add(additionalInfo);
             FAtiMAConnector.ActionSucceeded(param);
 
-            if (playerId != ID && random.Next(100) <= 60)
+            List<string> possibleSubCats = new List<string>( new string[] { "OURS_THEIRS_HIGH", "OURS_THEIRS_LOW", "THEIRS_OURS_HIGH", "THEIRS_OURS_LOW", "THEIRS_THEIRS_HIGH", "OURS_OURS_HIGH"});
+
+            if (playerId != ID && random.Next(100) <= 60 && possibleSubCats.Contains(additionalInfo))
             {
                 string cat = "Play";
                 string subCat = additionalInfo;
