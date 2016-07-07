@@ -388,32 +388,45 @@ namespace ThalamusFAtiMA
                     int nextPlayerId = Int16.Parse(parameters.Parameters[0]);
                     if (ThalamusConnector.GameActive)
                     {
-                        if (random.Next(100) <= 60)
+                        
+                        string cat = "NextPlayer";
+                        string subCat= "";
+                        if (nextPlayerId == ThalamusConnector.ID)
                         {
-                            string cat = "NextPlayer";
-                            string subCat;
-                            if (nextPlayerId == ThalamusConnector.ID)
-                            {
-                                subCat = "SELF";
-                            }
-                            else if (nextPlayerId == ThalamusConnector.PartnerID)
-                            {
-                                subCat = "TEAM_PLAYER";
-
-                            }
-                            else
-                            {
-                                subCat = "OPPONENT";
-                            }
+                            subCat = "SELF";
                             ThalamusConnector.RequestUtterance(cat, subCat);
                             ThalamusConnector.WaitForResponse();
                             if (ThalamusConnector.Talking)
                             {
-                                ThalamusConnector.TypifiedPublisher.GlanceAtTarget("cards3");
+                                ThalamusConnector.TypifiedPublisher.GlanceAtTarget("ownCards");
                                 ThalamusConnector.TypifiedPublisher.StartedUtterance(ThalamusConnector.ID, cat, subCat);
                                 ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId.ToString(), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
                             }
                         }
+                        else
+                        {
+                            if (random.Next(100) <= 60)
+                            {
+                                if (nextPlayerId == ThalamusConnector.PartnerID)
+                                {
+                                    subCat = "TEAM_PLAYER";
+
+                                }
+                                else
+                                {
+                                    subCat = "OPPONENT";
+                                }
+                                ThalamusConnector.RequestUtterance(cat, subCat);
+                                ThalamusConnector.WaitForResponse();
+                                if (ThalamusConnector.Talking)
+                                {
+                                    ThalamusConnector.TypifiedPublisher.GlanceAtTarget("ownCards");
+                                    ThalamusConnector.TypifiedPublisher.StartedUtterance(ThalamusConnector.ID, cat, subCat);
+                                    ThalamusConnector.TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { "|nextPlayerId|", "|partnerId|", "|opponentId1|", "|opponentId2|" }, new string[] { nextPlayerId.ToString(), ThalamusConnector.PartnerID.ToString(), ThalamusConnector.Opponent1ID.ToString(), ThalamusConnector.Opponent2ID.ToString() });
+                                }
+                            }
+                        }
+                        
                         this.ActionSucceeded(parameters);
                     }
                 }

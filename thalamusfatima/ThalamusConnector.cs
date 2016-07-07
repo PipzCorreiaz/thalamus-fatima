@@ -110,7 +110,7 @@ namespace ThalamusFAtiMA
             }
         }
 
-        public void ForwardSessionStart(int sessionId, int numGames, int numRobots, int playerId)
+        public void ForwardSessionStart(int sessionId, int numGames, int numRobots, int playerId, int shouldGreet)
         {
             SessionActive = false;
             Renounce = false;
@@ -129,14 +129,17 @@ namespace ThalamusFAtiMA
             param.Parameters.Add("0");
             FAtiMAConnector.ActionSucceeded(param);
 
-            string cat = "SessionStart";
-            string subCat = "SESSION_" + sessionId;
-            RequestUtterance(cat, subCat);
-            WaitForResponse();
-            if (Talking)
+            if (shouldGreet == 1)
             {
-                TypifiedPublisher.StartedUtterance(-1, cat, subCat);
-                TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
+                string cat = "SessionStart";
+                string subCat = "SESSION_" + sessionId;
+                RequestUtterance(cat, subCat);
+                WaitForResponse();
+                if (Talking)
+                {
+                    TypifiedPublisher.StartedUtterance(-1, cat, subCat);
+                    TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
+                }
             }
             SessionActive = true;
         }
