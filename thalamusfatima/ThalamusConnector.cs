@@ -181,11 +181,22 @@ namespace ThalamusFAtiMA
         {
             GameActive = false;
             PlayedGames++;
+            int myTeamScore, otherTeamScore;
+            if (ID % 2 == 0)
+            {
+                myTeamScore = team0Score;
+                otherTeamScore = team1Score;
+            }
+            else
+            {
+                myTeamScore = team1Score;
+                otherTeamScore = team0Score;
+            }
             
             ActionParameters param = new ActionParameters();
             param.Subject = "GUI";
             param.ActionType = "GameEnd";
-            if (team1Score >= team0Score)
+            if (myTeamScore >= otherTeamScore)
             {
 
                 param.Target = "1";
@@ -199,7 +210,7 @@ namespace ThalamusFAtiMA
             if (!Renounce && PlayedGames < NumGamesPerSession)
             {
                 string cat = "", subCat = "";
-                if (team0Score == 120)
+                if (otherTeamScore == 120)
                 {
                     cat = "GameEnd";
                     subCat = "QUAD_LOSS";
@@ -211,7 +222,7 @@ namespace ThalamusFAtiMA
                         TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }   
                 }
-                else if (team1Score == 120)
+                else if (myTeamScore == 120)
                 {
                     cat = "GameEnd";
                     subCat = "QUAD_WIN";
@@ -223,7 +234,7 @@ namespace ThalamusFAtiMA
                         TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
-                else if (team0Score > 90)
+                else if (otherTeamScore > 90)
                 {
                     cat = "GameEnd";
                     subCat = "DOUBLE_LOSS";
@@ -235,7 +246,7 @@ namespace ThalamusFAtiMA
                         TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
-                else if (team1Score > 90)
+                else if (myTeamScore > 90)
                 {
                     cat = "GameEnd";
                     subCat = "DOUBLE_WIN";
@@ -247,7 +258,7 @@ namespace ThalamusFAtiMA
                         TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
-                else if (team0Score > 60)
+                else if (otherTeamScore > 60)
                 {
                     cat = "GameEnd";
                     subCat = "SINGLE_LOSS";
@@ -259,7 +270,7 @@ namespace ThalamusFAtiMA
                         TypifiedPublisher.PerformUtteranceFromLibrary("", cat, subCat, new string[] { }, new string[] { });
                     }
                 }
-                else if (team1Score > 60)
+                else if (myTeamScore > 60)
                 {
                     cat = "GameEnd";
                     subCat = "SINGLE_WIN";
@@ -314,13 +325,25 @@ namespace ThalamusFAtiMA
             param.ActionType = "SessionEnd";
             string cat = "", subCat = "SESSION_" + sessionId;
 
-            if (team0Score > team1Score)
+            int myTeamScore, otherTeamScore;
+            if (ID % 2 == 0)
+            {
+                myTeamScore = team0Score;
+                otherTeamScore = team1Score;
+            }
+            else
+            {
+                myTeamScore = team1Score;
+                otherTeamScore = team0Score;
+            }
+
+            if (otherTeamScore > myTeamScore)
             {
                 param.Target = "0";
                 cat = "SessionEnd";
                 subCat += "_LOSS";
             }
-            else if (team1Score > team0Score)
+            else if (myTeamScore > otherTeamScore)
             {
                 param.Target = "1";
                 cat = "SessionEnd";
@@ -606,7 +629,6 @@ namespace ThalamusFAtiMA
                     if (winnerId == ID || winnerId == (ID + 2) % 4)
                     {
                         subCat = "OURS_";
-                        currentPoints += trickPoints;
                         currentPoints += trickPoints;
                     }
                     else
